@@ -531,7 +531,7 @@ def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
    
     LOAD_TTP_SUPPLEMENT(m_DATASET) #, 'ATTACK_EXTENSIONS.xlsx', 'ATT&CKSUP')
     LOAD_ATK4ICS (m_DATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (Ispread, m_DATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
+    LOAD_ACTOR_PROFILES (Tspread, m_DATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
 
     denyTactics = []
     for t in m_DATASET['TTP_SUP']:
