@@ -154,7 +154,7 @@ if ( __name__ == "__main__"):
     mydataset = LOAD_DATA(m_file_INFRASTRUCTURE, m_file_SCENARIOS, False, False)
     sysdeplist = sortSystemsbyFunction(mydataset)
     LOAD_ATK4ICS (mydataset, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (m_file_INFRASTRUCTURE, mydataset, ['SCADACAT', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'])
+    LOAD_ACTOR_PROFILES (m_file_SCENARIOS, mydataset, ['SCADACAT', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'])
         
     print('End of run')
     
