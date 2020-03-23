@@ -121,7 +121,7 @@ if ( __name__ == "__main__"):
     myDATASET = LOAD_DATA (Ispread, Tspread, False, False )
     LOAD_TTP_SUPPLEMENT(myDATASET)
     LOAD_ATK4ICS (myDATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (Ispread, myDATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
+    LOAD_ACTOR_PROFILES (Tspread, myDATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
        
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
