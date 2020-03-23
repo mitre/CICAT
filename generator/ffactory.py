@@ -339,7 +339,7 @@ if ( __name__ == "__main__"):
     LOAD_TTP_SUPPLEMENT(myDATASET)
     
     LOAD_ATK4ICS (myDATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (m_file_INFRASTRUCTURE, myDATASET, ['SCADACAT', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'])
+    LOAD_ACTOR_PROFILES (Tspread, myDATASET, ['SCADACAT', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'])
  
     
     ffactory = FILTER_FACTORY(False )
