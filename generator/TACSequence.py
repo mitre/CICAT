@@ -249,7 +249,7 @@ if ( __name__ == "__main__"):
     LOAD_TTP_SUPPLEMENT (myDATASET) 
     
     LOAD_ATK4ICS (myDATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (Ispread, myDATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )    
+    LOAD_ACTOR_PROFILES (Tspread, myDATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )    
     
    
     denyTTPs = []
