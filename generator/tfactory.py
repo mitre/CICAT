@@ -27,6 +27,7 @@ from tmodel import TARGET
 from tmodel import SCENARIO
 from tmodel import INDICATOR
 from tmodel import COA
+from tmodel import ENTRYPOINT
 
 def findActor(aid, dataset ):
     for j in dataset['ATKGROUPS']:
@@ -35,24 +36,24 @@ def findActor(aid, dataset ):
         
 def findTargetRecord(tid, dataset):
     for j in dataset['TARGET']:
-        if j.getTID() == tid:
+        if j.getName() == tid:
             return j
         
 def findTarget(tgtobj, dataset ):
-    ttype = tgtobj.getType()
+#    ttype = tgtobj.getType()
     tname = tgtobj.getName()    
-    if ttype.lower() == 'COMPONENT'.lower():
-        for j in dataset['COMPONENT']:
-            if j.getName().lower() == tname.lower():
-                return j
-    elif ttype.lower() == 'SYSTEM'.lower():
-        for j in dataset['SYSTEM']:
-            if j.getName().lower() == tname.lower():
-                return j
-    elif ttype.lower() == 'FUNCTION'.lower():
-        for j in dataset['FUNCTION']:
-            if j.getName().lower() == tname.lower():
-                return j
+#    if ttype.lower() == 'COMPONENT'.lower():
+    for j in dataset['COMPONENT']:
+        if j.getName().lower() == tname.lower():
+            return j
+#    elif ttype.lower() == 'SYSTEM'.lower():
+#        for j in dataset['SYSTEM']:
+#            if j.getName().lower() == tname.lower():
+#                return j
+#    elif ttype.lower() == 'FUNCTION'.lower():
+#        for j in dataset['FUNCTION']:
+#            if j.getName().lower() == tname.lower():
+#                return j
 
 
 class THREAT_FACTORY():
@@ -63,10 +64,12 @@ class THREAT_FACTORY():
             print ('THREAT factory constructed..')
         
     def getLoader (self, sheetname ): 
-        if (sheetname == 'INDICATOR'):
-            return INDICATOR_FACTORY (self.filename, sheetname, self.trace )
-        elif (sheetname == 'TARGET'):
-            return TARGET_FACTORY (self.filename, sheetname, self.trace )
+#        if (sheetname == 'INDICATOR'):
+#            return INDICATOR_FACTORY (self.filename, sheetname, self.trace )
+        if (sheetname == 'TARGET'):
+            return INFRASTRUCTURE_FACTORY (self.filename, 'INFRASTRUCTURE', True, self.trace )
+        elif (sheetname == 'ENTRYPOINT'):
+            return INFRASTRUCTURE_FACTORY (self.filename, 'INFRASTRUCTURE', False, self.trace )
         elif (sheetname == 'SCENARIO'):
             return SCENARIO_FACTORY(self.filename, sheetname, self.trace)
         elif (sheetname == 'COA'):
@@ -78,9 +81,7 @@ class THREAT_FACTORY():
         tid = s.getTargetID()
         target = findTargetRecord(tid, dataset)
         if target:
-            tgtobj = findTarget(target, dataset)
-            if tgtobj:
-               s.setTarget(tgtobj )
+             s.setTarget(target )
         else:
             if self.trace:
                print ('WARNING: Could not find target', tid)
@@ -115,24 +116,37 @@ class INDICATOR_FACTORY(THREAT_FACTORY):
        del ret[0]
        return ret
      
-class TARGET_FACTORY (THREAT_FACTORY):
-    def __init__ (self, filename, sheetname, trace):
+class INFRASTRUCTURE_FACTORY (THREAT_FACTORY):
+    def __init__ (self, filename, sheetname, btargetFlag, trace):
         self.filename = filename
         self.sheetname = sheetname
+        self.btargetFlag = btargetFlag
         self.trace = trace
         if self.trace:
-            print ('TARGET factory constructed..')
+            if btargetFlag:
+               print ('TARGET factory constructed..')
+            else:
+               print ('ENTRYPOINT factory constructed..')      
         return
 
     def load (self):
         if self.trace:
-            print ('Loading Targets..')
+               if self.btargetFlag:
+                   print ('Loading target information..')
+               else:
+                   print ('Loading entry point information..')
         book = openpyxl.load_workbook(self.filename, data_only=True) 
         sheet = book[self.sheetname]
         ret = []
-        for row in sheet.rows:
-           ret.append (TARGET (row[0].value, row[1].value, row[2].value ) )
-
+        
+        if self.btargetFlag:
+           for row in sheet.rows:
+               if row[3].value:
+                 ret.append (TARGET (row[0].value, row[1].value ) )        
+        else:
+            for row in sheet.rows:
+                if row[4].value:
+                 ret.append (ENTRYPOINT (row[0].value, row[1].value ))
         del ret[0]
         return ret   
 
