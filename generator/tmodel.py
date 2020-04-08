@@ -149,33 +149,33 @@ class INDICATOR:
     
 
 class TARGET:
-    def __init__ (self, tid, ttype, tname):
-        self.tid = tid
-        self.ttype = ttype
-        self.tname = tname
-        self.crit = 'Not set'
-        self.target = ''
-        self.component = None  # this variable is undefined for Functions, Systems and Capability targets
+    def __init__ (self, cid, cname):
+        self.cid = cid
+        self.cname = cname
+#        self.crit = 'Not set'
+        self.component = None
 
-    def initTarget(self, bigdict ):
-        if self.target:
-            return self.target         
+    def initTarget(self, clist ):
+        if self.component:
+            return self.component         
 
-        tlist = bigdict[self.ttype]       
-        for x in tlist:
-            if x.getID() == self.tname:
-              self.target = x  
-              self.crit = x.getCriticality()
-              return self.target
+        for x in clist:
+            if x.getID() == self.cid:
+              self.component = x  
+#              self.crit = x.getCriticality()
+              return self.component
 
-    def setComponent (self, comp):
-        self.component = comp
+#    def setComponent (self, comp):
+#        self.component = comp
         
+    def getCID(self):
+        return self.cid
+    
+    def getName(self):
+        return self.cname   
+    
     def getComponent (self):
         return self.component
-
-    def getTID(self):
-        return self.tid
     
     def getIPAddr(self):
         if self.component:
@@ -184,19 +184,14 @@ class TARGET:
     def getZone(self):
         if self.component:
             return self.component.getZone()
-    
-    def getType(self):
-        return self.ttype
-    
-    def getName(self):
-        return self.tname
         
     def getCriticality(self ):
-        return self.crit
+        if self.component:
+           return self.component.getCriticality()
     
     def PP(self, verbose =True ):
-        print ('TARGET:', self.tid, ' ', self.ttype, ':', self.tname)
-        self.target.PP(verbose )
+        print ('TARGET:', self.cid, ' :', self.cname)
+        self.component.PP(verbose )
        
 class SCENARIO:
     def __init__(self, dbID, shortname, name, desc, detail, actorID, intendedEffect, targetID ): #, ownerID, created, modified, restricted):
@@ -260,8 +255,28 @@ class SCENARIO:
 
 
 class ENTRYPOINT:
-    def __init__(self, cmp ):
-        self.component = cmp
+    def __init__(self, cid, cname ):
+        self.cid = cid
+        self.cname = cname
+        self.component = None
+        
+    def initEntrypoint(self, clist ):
+        if self.component:
+            return self.component 
+        
+        for x in clist:
+            if x.getID() == self.cid:
+              self.component = x  
+              return self.component        
+
+    def getCID(self):
+        return self.cid
+    
+    def getName(self):
+        return self.cname    
+       
+    def getComponent (self):
+        return self.component
 
     def getIPAddr (self):
         if self.component:
@@ -274,11 +289,7 @@ class ENTRYPOINT:
     def getZone(self):
         if self.component:
             return self.component.getZone()
-       
-    def getComponent (self):
-        return self.component
-    
-
+          
 class COA:
    def __init__ (self, family, name, title, priority, impact, desc, supp, related ):
        self.family = family
