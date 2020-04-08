@@ -7,7 +7,7 @@ Created on Mon Feb 17 12:08:22 2020
 import sys
 import re
 from collections import defaultdict
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES
 from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS #, m_file_EXTENSIONS, m_file_ODNI 
 
 m_byTacticDict = defaultdict(list)
