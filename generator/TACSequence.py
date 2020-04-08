@@ -20,7 +20,7 @@ import sys
 from random import sample
 from collections import defaultdict
 from ffactory import FILTER_FACTORY, INIT_FILTERS #, getTTPs, showTTPs
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES 
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES 
  
 from topology import INIT_TOPOLOGY #, m_topology, m_zoneCIs, m_zoneMMap
 from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_ODNI #m_file_EXTENSIONS, 
