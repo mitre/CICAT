@@ -29,7 +29,7 @@ from amodel import MALWARE
 from amodel import THREATACTOR
 from amodel import CYBERTOOL
 from amodel import ATKRELATION
-from columnloader import LoadColsInSpreadsheet
+from columnloader import LoadColsInSpreadsheet, LoadColNames
 
 
 def isCOA (entry):
@@ -159,6 +159,9 @@ class ATTACK_FACTORY():
               
           del (ret[0])
           return ret
+      
+        def loadProfileNames(self, fname):
+            return LoadColNames (fname, 'ACTOR PROFILES')
 
         # group profile are loaded from the ACTOR PROFILES tab in the INFRASTRUCTURE MODEL spreadsheet         
         def loadGroupProfile (self, dataset, fname, pname):
