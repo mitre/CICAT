@@ -23,7 +23,7 @@ from collections import defaultdict
 from afactory import ATTACK_FACTORY
 from ifactory import CI_FACTORY
 from tfactory import THREAT_FACTORY
-from tmodel import ENTRYPOINT
+#from tmodel import ENTRYPOINT
 from vfactory import VULNERABILIY_FACTORY
 from stats import sortSystemsbyFunction
 import os
@@ -37,6 +37,9 @@ m_file_SCENARIOS = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."
 
 m_file_EXTENSIONS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATTACK_EXTENSIONS.xlsx"))
 m_file_ODNI = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ODNI.xlsx"))
+
+m_file_ATK4ICS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATK4ICS.xlsx"))
+
 
 def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     ret = defaultdict(list)
@@ -69,8 +72,7 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     for c in ret['COMPONENT']:
         c.getAccessibility()
         c.getSusceptibility()
-        if c.isEP() == 'Yes':
-            ret['ENTRYPOINT'].append(ENTRYPOINT(c))    
+
 
     # Initalize infrastructure criticality data
     for j in ret['FUNCTION']:
@@ -96,27 +98,49 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     ret['ATKMITIGATION'] = atkFACTORY.loadMitigations()
     ret['ATKTOOL'] = atkFACTORY.loadTools()
     ret['ATKRELS'] = atkFACTORY.initRelationships(ret)   
-      
+    
+    
+    # Load ATT&CK4ICS
+    ret['ATK4ICS TTPs'] = atkFACTORY.loadTechniquesFromSheet (m_file_ATK4ICS, 'ATK4ICS TTPs')
+    ret['ATK4ICS MITs'] = atkFACTORY.loadMitigationsFromSheet (m_file_ATK4ICS, 'ATK4ICS MITs')
+
+    # link TTPs with associated MITs and vice versa
+    for t in ret['ATK4ICS TTPs']:
+        for m in ret['ATK4ICS MITs']:
+            if t.getTECHID() == m.getTECHID():
+                t.addCOA(m, None)
+                m.addMitigates(t, None)
+                break
+                
+    # Load Threat Actor profiles                
+    profilist = atkFACTORY.loadProfileNames(m_file_SCENARIOS)
+    for p in profilist:    
+       actor = atkFACTORY.loadGroupProfile (ret, m_file_SCENARIOS, p)
+       ret['ATKGROUPS'].append (actor)
+
+    # Calculated sophistication metric for each threat actor     
     for a in ret['ATKGROUPS']:
         a.getSophisticationLevel()
 
-    ThreatSpread = threatSpread
-    print('Loading Scenario data from', ThreatSpread)
+    # Loading scerario spreadsheet data
+    print('Loading Scenario data from', threatSpread)
     
-    #load scenario data from spreadsheet
-    trFACTORY = THREAT_FACTORY(ThreatSpread, trace)    
+    trFACTORY = THREAT_FACTORY(threatSpread, trace)    
     ret['TARGET'] = trFACTORY.getLoader('TARGET').load()
+    ret['ENTRYPOINT'] = trFACTORY.getLoader('ENTRYPOINT').load()
     ret['SCENARIO'] = trFACTORY.getLoader('SCENARIO').load() 
-    ret['COA'] = trFACTORY.getLoader('COA').load(os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', '800-53', 'controls.2.xlsx')))
 
-    trFACTORY.initRelationships(ret)       
-    
+    # Load H800-53 controls
+#    ret['COA'] = trFACTORY.getLoader('COA').load(os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', '800-53', 'controls.2.xlsx')))
+   
     for t in ret['TARGET']:
-      if t.getType() == 'COMPONENT':
-        for c in ret['COMPONENT']:
-            if t.getName() == c.getIPAddress():
-                t.setComponent(c)
-                break
+        t.initTarget (ret['COMPONENT'])
+        
+    for e in ret['ENTRYPOINT']:
+        e.initEntrypoint (ret['COMPONENT'])
+        
+    trFACTORY.initRelationships(ret)              
+
     return ret
 
 def LOAD_TTP_EXTENSION (dataset, fname=m_file_EXTENSIONS, sheetname='TTP_EXT'):
@@ -127,34 +151,35 @@ def LOAD_TTP_SUPPLEMENT (dataset, fname=m_file_EXTENSIONS, sheetname='TTP_SUP'):
     atkFACTORY = ATTACK_FACTORY('SPREAD', fname, False)
     dataset[sheetname] = atkFACTORY.loadTechniquesFromSheet(fname, sheetname)
     
-def LOAD_ATK4ICS (dataset, fname):
-    atkFactory = ATTACK_FACTORY ('SPREAD', fname, False)
-    dataset['ATK4ICS TTPs'] = atkFactory.loadTechniquesFromSheet (fname, 'ATK4ICS TTPs')
-    dataset['ATK4ICS MITs'] = atkFactory.loadMitigationsFromSheet (fname, 'ATK4ICS MITs')
+#def LOAD_ATK4ICS (dataset, fname):
+#    atkFactory = ATTACK_FACTORY ('SPREAD', fname, False)
+#    dataset['ATK4ICS TTPs'] = atkFactory.loadTechniquesFromSheet (fname, 'ATK4ICS TTPs')
+#    dataset['ATK4ICS MITs'] = atkFactory.loadMitigationsFromSheet (fname, 'ATK4ICS MITs')
 
     # link TTPs with associated MITs and vice versa
-    for t in dataset['ATK4ICS TTPs']:
-        for m in dataset['ATK4ICS MITs']:
-            if t.getTECHID() == m.getTECHID():
-                t.addCOA(m, None)
-                m.addMitigates(t, None)
-                break
+#    for t in dataset['ATK4ICS TTPs']:
+#        for m in dataset['ATK4ICS MITs']:
+#            if t.getTECHID() == m.getTECHID():
+#                t.addCOA(m, None)
+#                m.addMitigates(t, None)
+#                break
+
                 
-    
-def LOAD_ACTOR_PROFILES (fname, dataset, profilist):
-    atkFactory = ATTACK_FACTORY ('NADA', fname, False)
-    for p in profilist:    
-       actor = atkFactory.loadGroupProfile (dataset, fname, p)
-       dataset['ATKGROUPS'].append (actor)
+#def LOAD_ACTOR_PROFILES (fname, dataset):
+#    atkFactory = ATTACK_FACTORY ('NADA', fname, False)
+#    profilist = atkFactory.loadProfileNames(fname)
+#    for p in profilist:    
+#       actor = atkFactory.loadGroupProfile (dataset, fname, p)
+#       dataset['ATKGROUPS'].append (actor)
 
 
 # main entry point
 if ( __name__ == "__main__"):
     
-    mydataset = LOAD_DATA(m_file_INFRASTRUCTURE, m_file_SCENARIOS, False, False)
+    mydataset = LOAD_DATA(m_file_INFRASTRUCTURE, m_file_SCENARIOS, False, True)
     sysdeplist = sortSystemsbyFunction(mydataset)
-    LOAD_ATK4ICS (mydataset, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (m_file_SCENARIOS, mydataset, ['SCADACAT', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'])
+#    LOAD_ATK4ICS (mydataset, '..\\data\ATK4ICS.xlsx' )
+#    LOAD_ACTOR_PROFILES (m_file_SCENARIOS, mydataset )
         
     print('End of run')
     
