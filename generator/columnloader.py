@@ -137,6 +137,18 @@ def LoadColsInSpreadsheet(fname, sheetname ):
     loadColData (wb, sheetname, ret )
     return ret
 
+def LoadColNames (fname, sheetname):
+    ret = []
+    book = openpyxl.load_workbook(fname, data_only=True)
+    sheet = book[sheetname]
+    for row in sheet.rows: 
+        for x in row:
+           ret.append(x.value)
+
+        del ret[0]
+        return ret 
+    
+
 
 # main entry point
 if ( __name__ == "__main__"):
