@@ -22,7 +22,7 @@ scenGEN.py - Utility application for generating scenarios
 import sys
 import random
 from collections import defaultdict
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES  # LOAD_TTP_EXTENSION
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES  # LOAD_TTP_EXTENSION
 from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_EXTENSIONS, m_file_ODNI
 
 from stats import TAGS_INDEX, x_TYPES, x_TACTICS, x_PLATFORMS, x_ACTTAGS, x_TTPTAGS, x_MITTAGS, x_MALTAGS, x_TOLTAGS 
@@ -124,7 +124,7 @@ def findActor(dataset, aid ):
 
 def getTargetRecord(dataset, tid):
     for j in dataset['TARGET']:
-        if j.getTID() == tid:
+        if j.getName() == tid:
             return j
 
 def Timecheck (dataset, tsttime):
@@ -325,7 +325,7 @@ def getTTPObj(dataset, techID):
     for t in dataset['ATT&CK']:
         if (t.getTECHID() == techID):
             return t        
-    for k in dataset['TTP_SUP']:
+    for k in dataset['ATK4ICS TTPs']:
         if (k.getTECHID() == techID):
             return k        
     print ('WARNING! could not find TTP object for ID:', techID)
@@ -421,7 +421,8 @@ def TTPtoJSON(ttp, bfull):
         ret['Tactic'] = ttp.getTactic()
         ret['Description'] = str(ttp.getDesc().encode('utf8'))
         ret['Platform'] = ttp.getPlatform()
-        ret['Detection'] = str(ttp.getDET().encode('utf8'))
+        if ttp.getDET():
+           ret['Detection'] = str(ttp.getDET().encode('utf8'))
         ret['URL'] = ttp.getURL()
     return ret
                
@@ -472,14 +473,14 @@ def GENERATE_SCENARIOS (dataset, ffactory, bUpdateSQL, zonemap, dbname='cicat20'
             continue
             
         targetIPs = []
-        if trec.getType().lower() == 'system':   
-           targetIPs = getSystemTargets(dataset, trec.getName(), False)                                
-        elif trec.getType().lower() == 'function':
-          targetIPs = getFunctionTargets (dataset, trec.getName(), False)
-        elif trec.getType().lower() == 'capability':
-          targetIPs = getCapabilityTargets(dataset, trec.getName(), False)
-        else:
-          targetIPs.append (trec.getName())  # COMPONENT targets use IP address as name
+#        if trec.getType().lower() == 'system':   
+#           targetIPs = getSystemTargets(dataset, trec.getName(), False)                                
+#        elif trec.getType().lower() == 'function':
+#          targetIPs = getFunctionTargets (dataset, trec.getName(), False)
+#        elif trec.getType().lower() == 'capability':
+#          targetIPs = getCapabilityTargets(dataset, trec.getName(), False)
+#        else:
+        targetIPs.append (trec.getName())  # COMPONENT targets use IP address as name
 
         if not(targetIPs):
            print('Target:', trec.getType(), trec.getName(), 'not found in system model.')
@@ -520,9 +521,6 @@ def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
     m_DATASET = LOAD_DATA(Ispread, Tspread, True, False)
 
     # Initialize topology
-#    zoneCrawlr.INIT_TOPOLOGY(m_DATASET, True) 
-#    zonemap = zoneCrawlr.buildZoneMap(zoneCrawlr.m_zoneCIs) 
-    
     zonemap = zoneCrawlr.INIT_TOPOLOGY(m_DATASET, True ) 
         
     # Initialize ODNI staging
@@ -530,16 +528,18 @@ def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
     mapTTPs(m_DATASET['ATT&CK']) 
    
     LOAD_TTP_SUPPLEMENT(m_DATASET) #, 'ATTACK_EXTENSIONS.xlsx', 'ATT&CKSUP')
-    LOAD_ATK4ICS (m_DATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (Tspread, m_DATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
 
-    denyTactics = []
-    for t in m_DATASET['TTP_SUP']:
-        if ['deny' in t.getTactic()]:
-            denyTactics.append(t)          
+#    LOAD_ATK4ICS (m_DATASET, '..\\data\ATK4ICS.xlsx' )
+#    LOAD_ACTOR_PROFILES (Tspread, m_DATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
+
+#    denyTactics = []
+#    for t in m_DATASET['TTP_SUP']:
+#        if ['deny' in t.getTactic()]:
+#            denyTactics.append(t)          
+#    
+#    augmentTTPs('deny', denyTactics)
     
-    augmentTTPs('deny', denyTactics)
-    
+    # Initialize pattern search filters
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, m_DATASET )
     initPatternMenu()
