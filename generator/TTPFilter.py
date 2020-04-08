@@ -6,7 +6,7 @@ Created on Tue Feb 18 14:29:19 2020
 """
 
 import sys
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES
 from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS
 from ffactory import FILTER_FACTORY, INIT_FILTERS, getTTPs, getTTPsforCTYPE
 
