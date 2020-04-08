@@ -105,7 +105,7 @@ def getTTP (dataset, ttpid):
    for j in dataset['ATT&CK']:
        if ttpid == j.getTECHID():
            return j
-   for j in dataset['TTP_SUP']:
+   for j in dataset['ATK4ICS TTPs']:
        if ttpid == j.getTECHID():
            return j       
    return None    
