@@ -202,13 +202,13 @@ class COMPONENT:
         if bTarget:
             fxlist = self.system.getFunctionList()
             fxnames = []
-            caplist = set ()
+            capset = set ()
             for fx in fxlist:
                 fxnames.append(fx.getName() )
-                caplist.add(fx.getCapability() )
+                capset.add(fx.getCapability() )
             print ('\nSystem Affected:', self.sysName )
-            print ('Function(s) Affected:', fxnames )
-            print ('Capabilit(ies) Affected:', caplist)
+            print ('Function(s) Affected:', list( set(fxnames) ) )
+            print ('Capabilit(ies) Affected:', list(capset) )
 
     
 class SYSTEM:
