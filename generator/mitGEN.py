@@ -53,7 +53,10 @@ def showMitigation (ttpobj ):
           
 def showDetection (ttpobj ):          
     print ('\n'+ttpobj.getTECHID()+' : '+ttpobj.getName() )
-    print ('Forensics:', ttpobj.getDET().encode('utf8').decode('utf8') )
+    if ttpobj.getDET():
+       print ('Forensics:', ttpobj.getDET().encode('utf8').decode('utf8') )
+    else:
+       print ('No forensic markers identified.')
     return    
           
 def showActor (dataset, Aname, verbose):
