@@ -247,17 +247,6 @@ if ( __name__ == "__main__"):
     m_STAGES = ODNI.mapTTPs(myDATASET['ATT&CK']) 
    
     LOAD_TTP_SUPPLEMENT (myDATASET) 
-    
-    LOAD_ATK4ICS (myDATASET, '..\\data\ATK4ICS.xlsx' )
-    LOAD_ACTOR_PROFILES (Tspread, myDATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )    
-    
-   
-    denyTTPs = []
-    for t in myDATASET['TTP_SUP']:
-       if ['deny' in t.getTactic() ]:
-           denyTTPs.append(t)          
-    
-    ODNI.augmentTTPs('deny', denyTTPs)      
    
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
@@ -290,7 +279,7 @@ if ( __name__ == "__main__"):
         patseq = GenTacticPattern(testpath, GetPatternbyName (k), False)
         print (patseq)       
         print ('\n')
-        print ('TTP Sequence(', actor,'):', GenTTPSequence (myDATASET, ffactory, patseq, actor, True, False) )
+        print ('TTP Sequence(', actor,'):', GenTTPSequence (myDATASET, ffactory, patseq, actor, True, True) )
         
     
     print ('End of run.')
