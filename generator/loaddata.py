@@ -45,7 +45,7 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     ret = defaultdict(list)
     
     CI_spreadsheet = infraSpread
-    print('\nLoading infrastructure data from', CI_spreadsheet)
+    print('\nloaddata: Loading infrastructure data from', CI_spreadsheet)
     
     # load infrastructure model data from spreadsheet
     ciFACTORY = CI_FACTORY(CI_spreadsheet, trace)  
@@ -111,19 +111,19 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
                 t.addCOA(m, None)
                 m.addMitigates(t, None)
                 break
-                
+
+    # Loading scerario spreadsheet data
+    print('loaddata: Loading Scenario data from', threatSpread)
+
     # Load Threat Actor profiles                
-    profilist = atkFACTORY.loadProfileNames(m_file_SCENARIOS)
+    profilist = atkFACTORY.loadProfileNames(threatSpread)
     for p in profilist:    
-       actor = atkFACTORY.loadGroupProfile (ret, m_file_SCENARIOS, p)
+       actor = atkFACTORY.loadGroupProfile (ret, threatSpread, p)
        ret['ATKGROUPS'].append (actor)
 
     # Calculated sophistication metric for each threat actor     
     for a in ret['ATKGROUPS']:
         a.getSophisticationLevel()
-
-    # Loading scerario spreadsheet data
-    print('Loading Scenario data from', threatSpread)
     
     trFACTORY = THREAT_FACTORY(threatSpread, trace)    
     ret['TARGET'] = trFACTORY.getLoader('TARGET').load()
