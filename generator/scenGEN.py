@@ -21,14 +21,17 @@ scenGEN.py - Utility application for generating scenarios
 
 import sys
 import random
+from datetime import datetime
 from collections import defaultdict
 from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES  # LOAD_TTP_EXTENSION
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_EXTENSIONS, m_file_ODNI
+from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_OSPREAD, m_file_EXTENSIONS, m_file_ODNI
 
 from stats import TAGS_INDEX, x_TYPES, x_TACTICS, x_PLATFORMS, x_ACTTAGS, x_TTPTAGS, x_MITTAGS, x_MALTAGS, x_TOLTAGS 
 
 from TACSequence import initPatternMenu, GenTacticPattern, GetPatternbyName, GenTTPSequence
 from ffactory import FILTER_FACTORY, INIT_FILTERS
+from spreadout import ExportData
+from SSoutput import DumpScenario
 
 import zoneCrawlr
 from dbLoad import refreshSCENARIOs
@@ -507,6 +510,9 @@ def GENERATE_SCENARIOS (dataset, ffactory, bUpdateSQL, zonemap, dbname='cicat20'
 
     return stats
 
+def getRunDT ():
+    return datetime.now().strftime("%m%d%Y_%H%M%S")
+    
 # Helper function for reading options from command line
 def optionReader(params, flag):
     idx = params.index(flag)
@@ -517,7 +523,7 @@ def optionReader(params, flag):
         exit()
    
 # Main function that runs scenario generator
-def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
+def generate(Ispread, Tspread, Ospread, Espread, dbUpdate, dbname, trace=False):
     m_DATASET = LOAD_DATA(Ispread, Tspread, True, False)
 
     # Initialize topology
@@ -528,9 +534,6 @@ def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
     mapTTPs(m_DATASET['ATT&CK']) 
    
     LOAD_TTP_SUPPLEMENT(m_DATASET) #, 'ATTACK_EXTENSIONS.xlsx', 'ATT&CKSUP')
-
-#    LOAD_ATK4ICS (m_DATASET, '..\\data\ATK4ICS.xlsx' )
-#    LOAD_ACTOR_PROFILES (Tspread, m_DATASET, ['SCADACAT', 'ICSCUB_1', 'RedCanary', 'APT28', 'APT1', 'OilRig', 'Lazarus Group', 'Leviathan'] )
 
 #    denyTactics = []
 #    for t in m_DATASET['TTP_SUP']:
@@ -544,10 +547,22 @@ def generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace=False):
     INIT_FILTERS (ffactory, m_DATASET )
     initPatternMenu()
   
-    myStats = GENERATE_SCENARIOS(m_DATASET, ffactory, dbUpdate, zonemap, dbname, trace)      
-    SCENARIO_REPORT(m_DATASET, myStats, reportOpt)    # options ['Details', 'Mitigations', 'Forensics'] )   
-  
-#   GENERATE_MITIGATIONS (m_DATASET, myStats, 'test')
+    dtstr = getRunDT()
+    myStats = GENERATE_SCENARIOS(m_DATASET, ffactory, dbUpdate, zonemap, dbname, trace)   
+    
+    fnamebits = Ospread.split('.xlsx')
+    newfname = fnamebits[0]+'.'+ dtstr + '.xlsx'
+        
+    print ('Outputting results to:', newfname )
+    DumpScenario (newfname, myStats, m_DATASET )
+    
+    if Espread:
+        enamebits = Espread.split('.xlsx')
+        newename = enamebits[0] + '.'+ dtstr + '.xlsx'
+        m_file_ESPREAD = newename
+        print ('Exporting results to:', m_file_ESPREAD)
+        ExportData (m_file_ESPREAD, myStats, m_DATASET )
+
     print('End of run')
 
 """
@@ -557,11 +572,8 @@ Input parameters:
 
 Infrastucture spreadsheet filename: required
 Threat spreadsheet filename: required
-
-Reporting options:
-   'Details' - reports TTP descriptions
-   'Mitigations' - reports TTP mitigations
-   'Forensics' - reports TTP detection techniques
+Output (Results) spreadsheet: required
+Export spreadsheet: optional
 
 """
 
@@ -571,7 +583,8 @@ if ( __name__ == "__main__"):
 #  default settings
     Ispread = m_file_INFRASTRUCTURE
     Tspread = m_file_SCENARIOS
-    reportOpt = 'Details'
+    Ospread = m_file_OSPREAD
+    Espread = None
     dbUpdate = False
     dbname = 'cicat2'
     trace = False
@@ -579,11 +592,9 @@ if ( __name__ == "__main__"):
     params = sys.argv
     if len(params) > 1:
         if 'help' in params[1].lower():
-            print ('\nUSAGE: python', params[0], '[-r (Details|Mitigations|Forensics)] [-u|--update] [-i <Path to Infrastructure spreadsheet>] [-s <Path to Scenarios spreadsheet>] [-db <name of database on localhost to update>] [-trace <output debug messages to console>]')
+            print ('\nUSAGE: python', params[0], '[-u|--update] [-i <Path to Infrastructure spreadsheet>] [-o <Path to Output spreadsheet>] [-e <Path to Export spreadsheet>] [-s <Path to Scenarios spreadsheet>] [-db <name of database on localhost to update>] [-trace <output debug messages to console>]')
             exit()
 
-        if '-r' in params:
-            reportOpt = optionReader(params, '-r')
 
         if '--update' in params or '-u' in params:
             dbUpdate = True
@@ -593,11 +604,17 @@ if ( __name__ == "__main__"):
 
         if '-s' in params:
             Tspread = optionReader(params, '-s')
+            
+        if '-e' in params:
+            Espread = optionReader(params, '-e')
+            
+        if '-o' in params:
+            Ospread = optionReader(params, '-o')
 
         if '-db' in params:
             dbname = optionReader(params, '-db')
-        
+            
         if '-trace' in params:
             trace = True
-        
-    generate(reportOpt, Ispread, Tspread, dbUpdate, dbname, trace)
+    
+    generate(Ispread, Tspread, Ospread, Espread, dbUpdate, dbname, trace)
