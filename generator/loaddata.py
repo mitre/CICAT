@@ -34,6 +34,8 @@ for cve in os.listdir(os.path.normpath(os.path.join(os.path.dirname(__file__), "
 
 m_file_INFRASTRUCTURE = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "INFRASTRUCTURE.xlsx"))
 m_file_SCENARIOS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "SCENARIOS.xlsx"))
+m_file_OSPREAD = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "OUTPUT.xlsx"))
+m_file_ESPREAD = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "EXPORT.xlsx"))
 
 m_file_EXTENSIONS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATTACK_EXTENSIONS.xlsx"))
 m_file_ODNI = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ODNI.xlsx"))
