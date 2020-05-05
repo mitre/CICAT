@@ -194,21 +194,43 @@ class COMPONENT:
                 ret = ret + int(s[1])
                 break
        return ret   
-
+   
+    
+    def getSystemAffected(self):
+        return self.sysName
+    
+    def getFunctionsAffected(self):
+         fxlist = self.system.getFunctionList()
+         fxnames = []
+         for fx in fxlist:
+             fxnames.append(fx.getName() )             
+         if fxnames:
+             return list (set(fxnames ))
+                 
+    def getCapabilitiesAffected (self):
+         fxlist = self.system.getFunctionList()
+         fxnames = []
+         capset = set()
+         for fx in fxlist:
+             fxnames.append(fx.getName() )        
+             capset.add(fx.getCapability() )        
+             
+         return list(capset)
+        
     
     def PP(self, bTarget, verbose=True):
         print ('\n'+self.ipaddr, 'System:', self.sysName, 'CVE count:', self.getCVEcount(), 'Impact Score:', self.getImpactScore() ) 
         self.getCtype().PP(True )
         if bTarget:
-            fxlist = self.system.getFunctionList()
-            fxnames = []
-            capset = set ()
-            for fx in fxlist:
-                fxnames.append(fx.getName() )
-                capset.add(fx.getCapability() )
-            print ('\nSystem Affected:', self.sysName )
-            print ('Function(s) Affected:', list( set(fxnames) ) )
-            print ('Capabilit(ies) Affected:', list(capset) )
+#            fxlist = self.system.getFunctionList()
+#            fxnames = []
+#            capset = set ()
+#            for fx in fxlist:
+#                fxnames.append(fx.getName() )
+#                capset.add(fx.getCapability() )
+            print ('\nSystem Affected:', self.getSystemAffected() )
+            print ('Function(s) Affected:', self.getFunctionsAffected() )
+            print ('Capabilit(ies) Affected:', self.getCapabilitiesAffected() )
 
     
 class SYSTEM:
