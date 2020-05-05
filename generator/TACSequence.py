@@ -51,10 +51,10 @@ m_objseqs = [['foothold',           'first',     [0, 7] ],
              ['credsandgo',         'any',       [3, 5, 7 ]],
              ['phonehomeandgo',     'any',       [9, 7] ],
              ['backdoor',           'last',      [6, 3, 2] ],
-             ['shwack2',            'last',      [6, 3, 12] ],   #12 - impact
-             ['icsshwack_1',        'last',      [6, 12] ],
-             ['icsshwack_2',        'last',      [6, 13] ],  #13 - inhibit-response-function
-             ['icsshwack_3',        'last',      [6, 14] ],  #14 - impair-process-contro
+             ['hammer_1',           'last',      [6, 3, 12] ],   #12 - impact
+             ['hammer_2',           'last',      [6, 12] ],
+             ['hammer_3',           'last',      [6, 13] ],  #13 - inhibit-response-function
+             ['hammer_4',           'last',      [6, 14] ],  #14 - impair-process-contro
              ['exfil',              'last',      [8, 10] ]  ]
 
 # dictionary of tactic sequences
@@ -75,19 +75,19 @@ def initPatternMenu ():
     
     initDS()
 
-    m_patternMenu ['Ninja Shwack'] = ['foothold', 'justgo', 'shwack2'] 
-    m_patternMenu ['External Shwack'] = ['foothold', 'recceandgo', 'shwack2' ]
-    m_patternMenu ['External Credgrab'] = ['foothold', 'credsandgo', 'exfil'] 
-    m_patternMenu ['External Collect'] = ['foothold', 'collectandgo', 'exfil'] 
-    m_patternMenu ['External Backdoor'] = ['recceandgo', 'recceandgo', 'coverandgo', 'backdoor']
-    m_patternMenu ['Mongo Shwack'] = ['justgo', 'recceandgo', 'coverandgo', 'shwack2'] 
-    m_patternMenu ['Insider Shwack'] = ['justgo', 'justgo', 'shwack2'] 
-    m_patternMenu ['Insider Collect'] = ['collectandgo', 'collectandgo', 'exfil']
-    m_patternMenu ['Insider Backdoor'] = ['justgo', 'justgo', 'backdoor']
-    m_patternMenu ['Insider Impact'] = ['justgo', 'justgo', 'shwack2']
-    m_patternMenu ['Insider ICSShwack_1'] = ['justgo', 'justgo', 'icsshwack_1']
-    m_patternMenu ['Insider ICSShwack_2'] = ['justgo', 'justgo', 'icsshwack_2']
-    m_patternMenu ['External ICSShwack_3'] = ['foothold', 'justgo', 'icsshwack_3']
+    m_patternMenu ['Saguaro'] = ['foothold', 'justgo', 'hammer_1'] 
+    m_patternMenu ['Barrel'] = ['foothold', 'recceandgo', 'hammer_1' ]
+    m_patternMenu ['Star'] = ['foothold', 'credsandgo', 'exfil'] 
+    m_patternMenu ['Feather'] = ['foothold', 'collectandgo', 'exfil'] 
+    m_patternMenu ['Old Lady'] = ['recceandgo', 'recceandgo', 'coverandgo', 'backdoor']
+    m_patternMenu ['Bunny Ear'] = ['justgo', 'recceandgo', 'coverandgo', 'hammer_1'] 
+    m_patternMenu ['Blue Columnar'] = ['justgo', 'justgo', 'hammer_1'] 
+    m_patternMenu ['Moon'] = ['collectandgo', 'collectandgo', 'exfil']
+    m_patternMenu ['Easter'] = ['justgo', 'justgo', 'backdoor']
+    m_patternMenu ['Ladyfinger'] = ['justgo', 'justgo', 'hammer_1']
+    m_patternMenu ['Parodia'] = ['justgo', 'justgo', 'hammer_2']
+    m_patternMenu ['Bishops Cap'] = ['justgo', 'justgo', 'hammer_3']
+    m_patternMenu ['Fairy Castle'] = ['foothold', 'justgo', 'hammer_4']
     
     return m_patternMenu
 
