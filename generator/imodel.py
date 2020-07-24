@@ -32,7 +32,7 @@ class CTYPE:
         self.ctid = ctid
         self.vendor = vendor
         self.desc = desc
-        self.type = typex
+        self.typex = typex
         self.plat = plat
         self.vulnerability = []
         self.surface = []
@@ -47,7 +47,7 @@ class CTYPE:
         return self.desc
     
     def getType(self):
-        return self.type
+        return self.typex
     
     def getPlatform(self):
         return self.plat
@@ -71,10 +71,10 @@ class CTYPE:
         return self.surface
     
     def PP(self, verbose):
-       if not (self.type):
+       if not (self.typex):
           print ('Component Description:', self.vendor, self.desc )
        else:
-          print ('Component Description:', self.vendor, self.desc, self.type )
+          print ('Component Description:', self.vendor, self.desc, self.typex )
           
        if (verbose):
          if self.vulnerability:   
