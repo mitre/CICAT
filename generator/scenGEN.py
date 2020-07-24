@@ -1,43 +1,47 @@
 # -*- coding: utf-8 -*-
 """
-:::::::::::::::::::::::::::::::::::::  MITRE CRP PROJECT  :::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::  Critical Infrastructure Cyberspace Analysis Tool (CICAT)  :::::::::::::::::::::::::::::::::::::::
 
                                             NOTICE
+                                            
+The contents of this material reflect the views of the author and/or the Director of the Center for Advanced Aviation 
+System Development (CAASD), and do not necessarily reflect the views of the Federal Aviation Administration (FAA) 
+or the Department of Transportation (DOT). Neither the FAA nor the DOT makes any warranty or guarantee, or promise, 
+expressed or implied, concerning the content or accuracy of the views expressed herein. 
 
-This software (or technical data) was produced for the U. S. Government under contract 355358
-with Brookhaven National Laboratory, and is subject to the Rights in Data-General Clause 52.227-14 (MAY 2014) or (DEC 2007).
+This is the copyright work of The MITRE Corporation and was produced for the U.S. Government under Contract Number 
+DTFAWA-10-C-00080 and is subject to Federal Aviation Administration Acquisition Management System Clause 3.5-13, 
+Rights in Data-General, Alt. III and Alt. IV (Oct. 1996). No other use other than that granted to the U.S. Government, 
+or to those acting on behalf of the U.S. Government, under that Clause is authorized without the express written permission 
+of The MITRE Corporation. For further information, please contact The MITRE Corporation, Contract Office, 7515 Colshire Drive, 
+McLean, VA 22102 (703) 983-6000. ©2020 The MITRE Corporation. 
 
-The following copyright notice may be affixed after receipt of written approval from the Contracting Officer.
-Please contact the Contracts Management Office for assistance with obtaining approval or identifying the correct clause.
-If the contract has Clause 52.227-14, Alt. IV, written approval is not required and the below copyright notice may be affixed.
-
+The Government retains a nonexclusive, royalty-free right to publish or reproduce this document, or to allow others to do so, for 
+“Government Purposes Only.”                                           
+                                            
 (c) 2020 The MITRE Corporation. All Rights Reserved.
 
-
-scenGEN.py - Utility application for generating scenarios
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+scenGEN.py - CICAT scenario generation utility
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 """
+
 
 import sys
 import random
 from datetime import datetime
 from collections import defaultdict
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT #, LOAD_ATK4ICS, LOAD_ACTOR_PROFILES  # LOAD_TTP_EXTENSION
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_OSPREAD, m_file_EXTENSIONS, m_file_ODNI
+import json
 
-from stats import TAGS_INDEX, x_TYPES, x_TACTICS, x_PLATFORMS, x_ACTTAGS, x_TTPTAGS, x_MITTAGS, x_MALTAGS, x_TOLTAGS 
-
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
+from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_OSPREAD, m_file_ODNI
 from TACSequence import initPatternMenu, GenTacticPattern, GetPatternbyName, GenTTPSequence
 from ffactory import FILTER_FACTORY, INIT_FILTERS
 from spreadout import ExportData
 from SSoutput import DumpScenario
-
 import zoneCrawlr
 from dbLoad import refreshSCENARIOs
-from mitGEN import GENERATE_MITIGATIONS, SCENARIO_REPORT, ACTOR_REPORT
-from ODNI import loadODNI, mapTTPs, augmentTTPs
-import json
+from ODNI import loadODNI, mapTTPs
 
 trace = False
 
@@ -367,7 +371,7 @@ def genScenario(stats, dataset, ffactory, scenario, zonemap, entrypoint, target,
          
     vtrace = []   
     patseq = GenTacticPattern(iplist, GetPatternbyName (ret['EFFECT']), True )
-    ttpmap = GenTTPSequence (dataset, ffactory, patseq, scenario.getActorID(), True, False ) #()[0].getGroupID(), True, False)
+    ttpmap = GenTTPSequence (dataset, ffactory, patseq, scenario.getActorID(), True, False ) 
        
     for step in patseq:
         cmp = zoneCrawlr.findTargetComponentIP(dataset, step[0])
@@ -476,13 +480,7 @@ def GENERATE_SCENARIOS (dataset, ffactory, bUpdateSQL, zonemap, dbname='cicat20'
             continue
             
         targetIPs = []
-#        if trec.getType().lower() == 'system':   
-#           targetIPs = getSystemTargets(dataset, trec.getName(), False)                                
-#        elif trec.getType().lower() == 'function':
-#          targetIPs = getFunctionTargets (dataset, trec.getName(), False)
-#        elif trec.getType().lower() == 'capability':
-#          targetIPs = getCapabilityTargets(dataset, trec.getName(), False)
-#        else:
+
         targetIPs.append (trec.getName())  # COMPONENT targets use IP address as name
 
         if not(targetIPs):
@@ -499,8 +497,7 @@ def GENERATE_SCENARIOS (dataset, ffactory, bUpdateSQL, zonemap, dbname='cicat20'
             if scn:
                scndump[destIP].append (scn)
                print('  Scenario created for attack path from:', ep.getIPAddr() )
-#            else:
-#               print('Scenario:', s.getShortName(), 'Target:', tgtcmp.getIPAddress(), 'Entry point:', ep.getIPAddr(), 'no attack path.')
+
             
         s.setDetail(json.dumps(scndump))
 
@@ -533,14 +530,7 @@ def generate(Ispread, Tspread, Ospread, Espread, dbUpdate, dbname, trace=False):
     loadODNI(m_file_ODNI)
     mapTTPs(m_DATASET['ATT&CK']) 
    
-    LOAD_TTP_SUPPLEMENT(m_DATASET) #, 'ATTACK_EXTENSIONS.xlsx', 'ATT&CKSUP')
-
-#    denyTactics = []
-#    for t in m_DATASET['TTP_SUP']:
-#        if ['deny' in t.getTactic()]:
-#            denyTactics.append(t)          
-#    
-#    augmentTTPs('deny', denyTactics)
+    LOAD_TTP_SUPPLEMENT(m_DATASET)
     
     # Initialize pattern search filters
     ffactory = FILTER_FACTORY(False )
