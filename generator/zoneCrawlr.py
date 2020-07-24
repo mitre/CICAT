@@ -1,36 +1,47 @@
-help# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
-:::::::::::::::::::::::::::::::::::::  MITRE CICAT PROJECT  :::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::  Critical Infrastructure Cyberspace Analysis Tool (CICAT)  :::::::::::::::::::::::::::::::::::::::
 
-zoneCrawlr.py - Interactive utility for querying threat model
+                                            NOTICE
+                                            
+The contents of this material reflect the views of the author and/or the Director of the Center for Advanced Aviation 
+System Development (CAASD), and do not necessarily reflect the views of the Federal Aviation Administration (FAA) 
+or the Department of Transportation (DOT). Neither the FAA nor the DOT makes any warranty or guarantee, or promise, 
+expressed or implied, concerning the content or accuracy of the views expressed herein. 
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+This is the copyright work of The MITRE Corporation and was produced for the U.S. Government under Contract Number 
+DTFAWA-10-C-00080 and is subject to Federal Aviation Administration Acquisition Management System Clause 3.5-13, 
+Rights in Data-General, Alt. III and Alt. IV (Oct. 1996). No other use other than that granted to the U.S. Government, 
+or to those acting on behalf of the U.S. Government, under that Clause is authorized without the express written permission 
+of The MITRE Corporation. For further information, please contact The MITRE Corporation, Contract Office, 7515 Colshire Drive, 
+McLean, VA 22102 (703) 983-6000. ©2020 The MITRE Corporation. 
+
+The Government retains a nonexclusive, royalty-free right to publish or reproduce this document, or to allow others to do so, for 
+“Government Purposes Only.”                                           
+                                            
+(c) 2020 The MITRE Corporation. All Rights Reserved.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+zoneCrawlr.py - Interactive utility to evaluate infrastructure and topology
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 """
 
 import sys
-import random
-from collections import defaultdict
-from loaddata import LOAD_DATA
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_EXTENSIONS, m_file_ODNI 
-from topology import INIT_TOPOLOGY, m_topology, m_zoneCIs, m_zoneMMap
 
+from loaddata import LOAD_DATA
+from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS 
+from topology import INIT_TOPOLOGY, m_topology, m_zoneCIs
 
 #assumes zone IDs prefixed with 1 digit security level, returns [level, zoneID]
 def zoneSplit (zone):
     return [int(zone[0], zone[1:])]
         
-
 def findZone (zone):
     level = int(zone[0])
     znx = zone[1:]
     for j in m_topology[level]:
         if znx == j[0][1]:
             return j    
-
-#def findZone(level, znx):
-#    for j in m_topology[level]:
-#        if znx == j[0][1]:
-#            return j
 
 def findZonebyIP(dataset, ipaddr ):
     cmp = findTargetComponentIP(dataset, ipaddr )
@@ -40,7 +51,7 @@ def findZonebyIP(dataset, ipaddr ):
 
     sys = cmp.getSystem()
     if sys:
-        return str(sys.getLevel())+sys.getZone()    #[sys.getLevel(), sys.getZone()]
+        return str(sys.getLevel())+sys.getZone()
 
 def findTargetSystem(dataset, sysname ):
     for sysm in dataset['SYSTEM']:
@@ -68,7 +79,6 @@ def getSystemIPList(dataset, sysname ):
 def whosLocalZone (zone, bflatzone):
     ret = []
     zonedata = findZone(zone )
-#    zonedata = findZone(zone[0],zone[1])
     if not(zonedata):
         print('no zonedata for', zone)
         return None
@@ -89,7 +99,6 @@ def whosLocalIP (dataset, ipaddr, bflatzone ):
 def whosRemoteIP(dataset, ipaddr ):
     ret = []
     zone = findZonebyIP(dataset, ipaddr  ) 
-#    znx = str(str(zone[0])+zone[1])
 
     if m_zoneCIs[zone]:
         for ci in m_zoneCIs[zone]:
@@ -110,7 +119,7 @@ def find_path(graph, start, end, path=[]):
         path = path + [start]
         if start == end:
             return path
-#        if not graph.has_key(start):
+
         if not (start in graph):
             return None
         for node in graph[start]:
@@ -137,7 +146,7 @@ def find_shortest_path(graph, start, end, path=[]):
         path = path + [start]
         if start == end:
             return path
-#        if not graph.has_key(start):
+
         if not (start in graph):
             return None
         shortest = None
@@ -158,10 +167,7 @@ def bIsPATH (dataset, graph, ip1, ip2):
         return True
 
     srczone = findZonebyIP(dataset, ip1 )    
-#    sznx = str(str(srczone[0])+srczone[1])
-
     dstzone = findZonebyIP(dataset, ip2 )
-#    dznx = str(str(dstzone[0])+dstzone[1])
 
     path = find_path (graph, srczone, dstzone)
     if path:
@@ -176,21 +182,17 @@ def getZonepath (graph, zone1, zone2, bShortPath, trace):
           print ('\nFinding shortest path from', zone1, 'to', zone2)
        else:
           print ('\nFinding path from', zone1, 'to', zone2)
-      
-#    szn = str(str(zone1[0])+zone1[1])
-#    dzn = str(str(zone2[0])+zone2[1])
-        
+             
     if bShortPath:
-        ret = find_shortest_path(graph, zone1, zone2) #szn, dzn)
+        ret = find_shortest_path(graph, zone1, zone2)
     else:
-        plist = find_all_paths (graph, zone1, zone2) #szn, dzn)
+        plist = find_all_paths (graph, zone1, zone2)
         if trace:
             print (str(len(plist)), 'paths found')
         if len(plist) < 1:
             return None
         ret = plist
-#        ret = random.choice(plist)
-        
+       
     if trace:
         print ('path', ret)
 
@@ -361,7 +363,6 @@ def getSurfacesByType(dataset, zone, typex ):
             eplist = cmp.getSurfaceList()
             if eplist:
                 for e in eplist:
-#                    print('comparing',e.getEPtype().lower(), 'with', typex.lower())
                     if (e.getSurfaceType().lower() == typex.lower()):
                         ret.append ([j, cmp.getSysName(), e.getSurfaceType(), e.getAccess() ] )
     return ret
@@ -410,7 +411,7 @@ def traversePath(dataset, path, startIP, targetIP, surfaceType, platType, bAddCI
     if path:
       for step in path:   
         bLast = False
-        iplist = whosLocalZone(step, True ) #[int(step[0]), step[1]], True)
+        iplist = whosLocalZone(step, True )
         if lastStep(path, step):
             bLast = True            
             if trace:
@@ -464,7 +465,7 @@ def traversePath(dataset, path, startIP, targetIP, surfaceType, platType, bAddCI
                 print ('No IPs match requirements: surface:', surfaceType, 'platform:', platType )
             return
 
-        ret.append(selectNextTarget(dataset, fltlist ) )   #random.choice(fltlist)) 
+        ret.append(selectNextTarget(dataset, fltlist ) ) 
             
         if bAddCIs:
             if isLast(path, step):
@@ -540,9 +541,7 @@ def do_zonepath(cArray, zmap, trace):
         bshortest = True
         if cArray[3].lower() == 'all':
             bshortest = False
-            
-#        szn = str(srczn[0])+srczn[1]
-#        dzn = str(dstzn[0])+dstzn[1]
+
         zpaths = getZonepath (zmap, srczn, dstzn, bshortest, False)
         if not(zpaths):
             if trace:
@@ -570,7 +569,7 @@ def do_zonetargets(dataset, cArray, trace):
         if tmode.lower() == 'best':
             bBest = True
  
-        tlist = getTargetList(dataset, srczn, bBest ) #[int(srczn[0]), srczn[1]], bBest)
+        tlist = getTargetList(dataset, srczn, bBest )
         if not(tlist):
             print ('No targets in zone', srczn+'.')
             return
@@ -592,11 +591,9 @@ def do_zonends (dataset, cArray, trace):
         alist = []
         if cmdstr.lower().count('type') > 0:
             paramx = substring_after (cmdstr, '=')
-#            print ('type set to', paramx)
             alist = getSurfacesByType(dataset, srczn, paramx)
         elif cmdstr.lower().count('access') > 0:
             paramx = substring_after (cmdstr, '=')
-#            print ('access set to', paramx)
             alist = getSurfacesByAccess(dataset, srczn, paramx)
         else:
             alist = getSurfacesByZone(dataset, srczn)
@@ -621,7 +618,6 @@ def do_disruptSYS (dataset, cArray, trace):
            
     bFlat = False
     fstop = cArray[1]
-#    print ('fstop', fstop)
     if (fstop.split('=')[1].lower() == 'true'):
         bFlat = True
         
@@ -650,13 +646,11 @@ def do_disruptFX (dataset, cArray, trace):
            
     bFlat = False
     fstop = cArray[1]
-#    print ('fstop', fstop)
     if (fstop.split('=')[1].lower() == 'true'):
         bFlat = True
 
     bTop = False
     lstop = cArray[2]
-#    print ('lstop', lstop)
     if (lstop.split('=')[1].lower() == 'top'):
         bTop = True           
 
