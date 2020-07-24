@@ -1,8 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Feb 25 15:46:34 2020
+::::::::::::::::::::::::  Critical Infrastructure Cyberspace Analysis Tool (CICAT)  :::::::::::::::::::::::::::::::::::::::
 
-@author: JWYNN
+                                            NOTICE
+                                            
+The contents of this material reflect the views of the author and/or the Director of the Center for Advanced Aviation 
+System Development (CAASD), and do not necessarily reflect the views of the Federal Aviation Administration (FAA) 
+or the Department of Transportation (DOT). Neither the FAA nor the DOT makes any warranty or guarantee, or promise, 
+expressed or implied, concerning the content or accuracy of the views expressed herein. 
+
+This is the copyright work of The MITRE Corporation and was produced for the U.S. Government under Contract Number 
+DTFAWA-10-C-00080 and is subject to Federal Aviation Administration Acquisition Management System Clause 3.5-13, 
+Rights in Data-General, Alt. III and Alt. IV (Oct. 1996). No other use other than that granted to the U.S. Government, 
+or to those acting on behalf of the U.S. Government, under that Clause is authorized without the express written permission 
+of The MITRE Corporation. For further information, please contact The MITRE Corporation, Contract Office, 7515 Colshire Drive, 
+McLean, VA 22102 (703) 983-6000. ©2020 The MITRE Corporation. 
+
+The Government retains a nonexclusive, royalty-free right to publish or reproduce this document, or to allow others to do so, for 
+“Government Purposes Only.”                                           
+                                            
+(c) 2020 The MITRE Corporation. All Rights Reserved.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+fastcache.py - Utility to import ATT&CK data from portal and construct a JSON (cache) file
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 """
 
 from attackcti import attack_client
