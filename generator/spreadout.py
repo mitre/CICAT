@@ -33,14 +33,14 @@ m_exportSheets = ['SCENARIO_DESC', 'SCEN_ENTRY_POINT', 'THREAT_ACTOR_DESC', 'ASS
 
 m_HEADER_tags = defaultdict(list )
 
-m_HEADER_tags[0] = ['SCN_ID', 'SHORT_NAME', 'NAME', 'IMPACT_SCORE', 'INTENT', 'DESCRIPTION', 'EXTERNAL_INSIDER_EXTASINSIDER', 'DETAIL', 'ACTOR', 'TTP_PATTERN', 'ASSET_NAME' ]
+m_HEADER_tags[0] = ['SCN_ID', 'SHORT_NAME', 'NAME', 'IMPACT_SCORE', 'INTENT', 'DESCRIPTION', 'EXTERNAL_INSIDER_EXTASINSIDER', 'DETAIL', 'ACTOR', 'TTP_PATTERN', 'TARGET_NAME' ]
 m_HEADER_tags[1] = ['SCN_ID', 'ENTRY_ASSET_NAME' ]
 m_HEADER_tags[2] = ['GROUP_ID', 'ACTOR', 'ALIASES', 'SOPHISTICATION']
-m_HEADER_tags[3] = ['SCN_ID', 'ENTRY_ASSET_NAME', 'ASSET_ID', 'TTP_ID']
-m_HEADER_tags[4] = ['TTP_ID', 'MITIGATION_ID']
+m_HEADER_tags[3] = ['SCN_ID', 'ENTRY_ASSET_NAME', 'ASSET_ID', 'TTP_ID', 'MAP_ASSET_TO_TTP']
+m_HEADER_tags[4] = ['ID', 'TTP_ID', 'MITIGATION_ID']
 m_HEADER_tags[5] = ['TTP_ID', 'NAME', 'DESCRIPTION', 'URL', 'TACTICS_LIST']
 m_HEADER_tags[6] = ['MITIGATION_ID', 'NAME', 'DESCRIPTION', 'URL']
-m_HEADER_tags[7] = ['SCENARIO_ID', 'ENTRY_ASSET_NAME', 'FROM_ASSET_ID', 'TO_ASSET_ID']
+m_HEADER_tags[7] = ['ID', 'SCENARIO_ID', 'ENTRY_ASSET_NAME', 'TARGET_ASSET', 'FROM_ASSET_ID', 'TO_ASSET_ID', 'ENTRY_SYSTEM_NAME']
 
 def list2string(plist, separator):
     ret = 'undefined'
@@ -74,7 +74,12 @@ def getMITsforTTP (dataset, ttpID ):
             for c in clist:
                ret.append(c[0].getTECHID() )
             return ret
- 
+        
+def getSystemforAsset (dataset, asset):
+    for c in dataset['COMPONENT']:
+        if c.getName() == asset:
+            return c.getSysName()
+    
 
 def getMITsforTTPList (dataset, ttplist):
     clist = []
@@ -145,6 +150,7 @@ def saveSheetData (sheetname, sheet, tracedata, dataset):
 
     elif sheetname == 'ASSET_TTP_MAP':     
         row = 2
+        rowcnt = 1
         for k in tracedata.keys():
             values = k.split ('EP', maxsplit=1)
             curdict = tracedata[k]
@@ -153,12 +159,15 @@ def saveSheetData (sheetname, sheet, tracedata, dataset):
             tlist = curtrace['ttps']
             
             idx = 0  #index controls mapping of ttps to  assets in component list
+
             for c in clist:
                for t in tlist[idx]:
                   sheet.cell (row, 1, values[0] )
                   sheet.cell (row, 2, values[1] )
                   sheet.cell (row, 3, c)
                   sheet.cell (row, 4, t)
+                  sheet.cell (row, 5, rowcnt)
+                  rowcnt = rowcnt + 1
                   row = row + 1
                idx = idx + 1   
 
@@ -179,13 +188,16 @@ def saveSheetData (sheetname, sheet, tracedata, dataset):
     elif sheetname == 'TTP_MITIGATION_MAP':
         ttplist = getTTPlist (tracedata)
         row = 2
+        idx = 1
         for ttp in ttplist:
             clist = getMITsforTTP (dataset, ttp)
             if clist:
                for c in clist:
-                   sheet.cell (row, 1, ttp)
-                   sheet.cell (row, 2, c)
+                   sheet.cell(row, 1, idx)
+                   sheet.cell (row, 2, ttp)
+                   sheet.cell (row, 3, c)
                    row = row + 1
+                   idx = idx + 1
                 
     elif sheetname == 'MITIGATION_DESC':
         ttplist = getTTPlist (tracedata)
@@ -203,18 +215,25 @@ def saveSheetData (sheetname, sheet, tracedata, dataset):
 
     elif sheetname == 'ATTACK_PATH':
         row = 2
+        rowcnt = 1
         for k in tracedata.keys():
             values = k.split ('EP', maxsplit=1)
             curdict = tracedata[k]
             curtrace = curdict[0]
             clist = curtrace['path']   
+            target = curtrace['target']
+            sysName = getSystemforAsset (dataset, values[1])
             fromtolist = getFromToList (clist) 
             if fromtolist:
                 for p in fromtolist:
-                  sheet.cell (row, 1, values[0] )
-                  sheet.cell (row, 2, values[1] )
-                  sheet.cell (row, 3, p[0] )
-                  sheet.cell (row, 4, p[1] )
+                  sheet.cell (row, 1, rowcnt )
+                  sheet.cell (row, 2, values[0] )
+                  sheet.cell (row, 3, values[1] )
+                  sheet.cell (row, 4, target )
+                  sheet.cell (row, 5, p[0] )
+                  sheet.cell (row, 6, p[1] )
+                  sheet.cell (row, 7, sysName)
+                  rowcnt = rowcnt + 1
                   row = row + 1
                                   
            
@@ -230,9 +249,6 @@ def ExportData (fname, tracedata, dataset ):
     wb.save(filename = fname )   
 
 
-# main entry point
-if ( __name__ == "__main__"):  
-   print ('No unit test currently supported.')
 
        
 
