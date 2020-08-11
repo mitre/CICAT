@@ -29,16 +29,13 @@ actorGEN.py - verifies threat actor capabilities over range of tactics and platf
 
 import sys
 from ffactory import FILTER_FACTORY, INIT_FILTERS, getTTPs, showTTPs
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT 
+from loaddata import LOAD_DATA
 from topology import INIT_TOPOLOGY
-from loaddata import m_file_ODNI
 from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO  #testbed data used for unit tests
 from TACSequence import m_TACTIC_LIST, initPatternMenu, m_objdict
-
 from stats import TAGS_INDEX, x_TACTICS 
-
 from mitGEN import ACTOR_REPORT
-from ODNI import loadODNI, mapTTPs, augmentTTPs
+
 
 
 # verifies the combination: threat actor, tactic, platform includes at least one TTP  
@@ -112,19 +109,7 @@ if ( __name__ == "__main__"):
      
       
     myDATASET = LOAD_DATA (Ispread, Tspread, False, False )
-    zonemap = INIT_TOPOLOGY(myDATASET, True ) 
-    loadODNI(m_file_ODNI )
-    m_STAGES = mapTTPs(myDATASET['ATT&CK']) 
-   
-    LOAD_TTP_SUPPLEMENT (myDATASET) 
-   
-    denyTTPs = []
-    for t in myDATASET['TTP_SUP']:
-       if ['deny' in t.getTactic() ]:
-           denyTTPs.append(t)          
-    
-    augmentTTPs('deny', denyTTPs)   
-   
+    zonemap = INIT_TOPOLOGY(myDATASET, True )  
   
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
