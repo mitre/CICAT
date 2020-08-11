@@ -48,6 +48,14 @@ m_file_ODNI = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "da
 
 m_file_ATK4ICS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATK4ICS.xlsx"))
 
+m_file_TESTBED_MODEL = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "TB_infrastructure.xlsx"))
+m_file_TESTBED_SCNRO = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "TB_scenarios.xlsx"))
+
+# variables used for unit testing found in tb_infrstructure and tb_scenarios spreadsheets
+m_IT_test_list = ['ASSET_111', 'ASSET_711', 'ASSET_971', 'ASSET_811']
+m_ICS_test_list = ['ASSET_111', 'ASSET_711', 'ASSET_971', 'ASSET_1101']
+m_filter_test_list = ['ASSET_111', 'ASSET_711', 'ASSET_811', 'ASSET_1101']
+m_test_actor_list = ['APT28', 'APT1', 'IS01']
 
 def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     ret = defaultdict(list)
@@ -71,7 +79,7 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     
     if CVEflag:
        print('Loading CVE data from', m_CVEFiles)
-       vlnFACTORY = VULNERABILIY_FACTORY(trace)
+       vlnFACTORY = VULNERABILIY_FACTORY(True)
        ret['VULNERABILITY'] = vlnFACTORY.load(m_CVEFiles, ret['CTYPE'])
 
     # Initialize infrastructure relationships [requires vulnerability data be preloaded]
@@ -150,19 +158,20 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
 
     return ret
 
+"""
 def LOAD_TTP_EXTENSION (dataset, fname=m_file_EXTENSIONS, sheetname='TTP_EXT'):
     atkFACTORY = ATTACK_FACTORY('SPREAD', fname, False)  
     atkFACTORY.loadTTPExtension(dataset, fname, sheetname)
+"""
 
 def LOAD_TTP_SUPPLEMENT (dataset, fname=m_file_EXTENSIONS, sheetname='TTP_SUP'):
     atkFACTORY = ATTACK_FACTORY('SPREAD', fname, False)
     dataset[sheetname] = atkFACTORY.loadTechniquesFromSheet(fname, sheetname)
 
-
 # main entry point
 if ( __name__ == "__main__"):
     
-    mydataset = LOAD_DATA(m_file_INFRASTRUCTURE, m_file_SCENARIOS, False, True)
+    mydataset = LOAD_DATA(m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO, True, False)
     sysdeplist = sortSystemsbyFunction(mydataset)
         
     print('End of run')
