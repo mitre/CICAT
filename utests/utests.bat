@@ -1,17 +1,8 @@
-python ..\generator\loaddata.py > loadstatus.out
-python ..\generator\topology.py > topostatus.out
-python ..\generator\actorGEN.py > actgen.out
-python ..\generator\TACSequence.py > tacseq.out
-python ..\generator\TTPFilter.py > tpfilter.out
-python ..\generator\ffactory.py > ffact.out
-python ..\generator\scenGEN.py > scen.out
-
-
-
-
-rem python cicat.py location > locRep.out
-rem python cicat.py scenario > scenRep.out
-rem python cicat.py actor > actorRep.out
-rem python cicat.py capability > capRep.out
-rem python TTPGEN.py > tpgen.out
+python ..\generator\loaddata.py > loaddata_result.txt
+python ..\generator\topology.py > topology_result.txt
+python ..\generator\actorGEN.py > actorGEN_result.txt
+python ..\generator\TACSequence.py > TACSequence_result.txt
+python ..\generator\TTPFilter.py > TTPFilter_result.txt
+python ..\generator\ffactory.py > ffactory_result.txt
+python ..\generator\scenGEN.py > scenGEN_result.txt
 
