@@ -31,7 +31,8 @@ import sys
 from ffactory import FILTER_FACTORY, INIT_FILTERS, getTTPs, showTTPs
 from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT 
 from topology import INIT_TOPOLOGY
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_ODNI #m_file_EXTENSIONS
+from loaddata import m_file_ODNI
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO  #testbed data used for unit tests
 from TACSequence import m_TACTIC_LIST, initPatternMenu, m_objdict
 
 from stats import TAGS_INDEX, x_TACTICS 
@@ -41,7 +42,7 @@ from ODNI import loadODNI, mapTTPs, augmentTTPs
 
 
 # verifies the combination: threat actor, tactic, platform includes at least one TTP  
-def checkCombo (factory, dataset, tactic, platform, actor, trace):
+def filterTest (factory, dataset, tactic, platform, actor, trace):
     ret = getTTPs(ffactory, dataset, tactic, platform, actor)       
     if trace:
        showTTPs ('FILTER TEST: ' + tactic + ', ' + platform + ', ' + actor +': ', ret )                
@@ -56,11 +57,11 @@ def verifyObjSequence (factory, dataset, seqname, platform, actor, trace):
     tIndexList = entry[1]
     
     if trace:
-        print ('Verifying use of', seqname, 'by threat actor', actor, 'on', platform)
+        print ('\nVerifying use of', seqname, 'by threat actor', actor, 'on', platform)
 
     for tIndex in tIndexList:
         tactic =  m_TACTIC_LIST[tIndex]
-        if not (checkCombo (factory, dataset, tactic, platform, actor, False) ):
+        if not (filterTest (factory, dataset, tactic, platform, actor, trace) ):
             ret = False
             if trace:
                 print ('WARNING! threat actor', actor, 'has no TTPs for', tactic, 'on', platform )
@@ -92,10 +93,10 @@ def optionReader(params, flag):
         exit()    
 
 # main entry point
-if ( __name__ == "__main__"):   
-        
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+if ( __name__ == "__main__"):
+    
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO 
  
     params = sys.argv
     if len(params) > 1:
