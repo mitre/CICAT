@@ -31,8 +31,8 @@ import openpyxl
 
 from tmodel import TARGET
 from tmodel import SCENARIO
-from tmodel import INDICATOR
-from tmodel import COA
+#from tmodel import INDICATOR
+#from tmodel import COA
 from tmodel import ENTRYPOINT
 
 def findActor(aid, dataset ):
@@ -66,8 +66,8 @@ class THREAT_FACTORY():
             return INFRASTRUCTURE_FACTORY (self.filename, 'INFRASTRUCTURE', False, self.trace )
         elif (sheetname == 'SCENARIO'):
             return SCENARIO_FACTORY(self.filename, sheetname, self.trace)
-        elif (sheetname == 'COA'):
-            return COA_FACTORY (self.filename, sheetname, self.trace)
+#        elif (sheetname == 'COA'):
+#            return COA_FACTORY (self.filename, sheetname, self.trace)
         return
     
     def initRelationships(self, dataset ):       
@@ -88,7 +88,7 @@ class THREAT_FACTORY():
             if self.trace:
                print ('WARNING: Could not find actor', aid)
 
-
+"""
 class INDICATOR_FACTORY(THREAT_FACTORY):
     def __init__ (self, filename, sheetname, trace):
         self.filename = filename
@@ -109,6 +109,7 @@ class INDICATOR_FACTORY(THREAT_FACTORY):
 
        del ret[0]
        return ret
+"""
      
 class INFRASTRUCTURE_FACTORY (THREAT_FACTORY):
     def __init__ (self, filename, sheetname, btargetFlag, trace):
@@ -144,6 +145,7 @@ class INFRASTRUCTURE_FACTORY (THREAT_FACTORY):
         del ret[0]
         return ret   
 
+"""
 class COA_FACTORY (THREAT_FACTORY):
     def __init__ (self, filename, sheetname, trace):
         self.filename = filename
@@ -172,6 +174,7 @@ class COA_FACTORY (THREAT_FACTORY):
 
         del ret[0]
         return ret       
+"""
 
 class SCENARIO_FACTORY(THREAT_FACTORY):
     def __init__ (self, filename, sheetname, trace):
