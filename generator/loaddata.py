@@ -44,7 +44,6 @@ m_file_OSPREAD = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", 
 m_file_ESPREAD = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "EXPORT.xlsx"))
 
 m_file_EXTENSIONS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATTACK_EXTENSIONS.xlsx"))
-m_file_ODNI = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ODNI.xlsx"))
 
 m_file_ATK4ICS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "ATK4ICS.xlsx"))
 
