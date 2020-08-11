@@ -33,16 +33,15 @@ from datetime import datetime
 from collections import defaultdict
 import json
 
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
-from loaddata import m_file_OSPREAD, m_file_ODNI
+import zoneCrawlr
+from loaddata import LOAD_DATA 
+from loaddata import m_file_OSPREAD 
 from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO
 from TACSequence import initPatternMenu, GenTacticPattern, GetPatternbyName, GenTTPSequence
 from ffactory import FILTER_FACTORY, INIT_FILTERS
 from spreadout import ExportData
 from SSoutput import DumpScenario
-import zoneCrawlr
 from dbLoad import refreshSCENARIOs
-from ODNI import loadODNI, mapTTPs
 
 trace = False
 
@@ -527,13 +526,7 @@ def generate(Ispread, Tspread, Ospread, Espread, dbUpdate, dbname, trace=False):
     m_DATASET = LOAD_DATA(Ispread, Tspread, True, False)
 
     # Initialize topology
-    zonemap = zoneCrawlr.INIT_TOPOLOGY(m_DATASET, True ) 
-        
-    # Initialize ODNI staging
-    loadODNI(m_file_ODNI)
-    mapTTPs(m_DATASET['ATT&CK']) 
-   
-    LOAD_TTP_SUPPLEMENT(m_DATASET)
+    zonemap = zoneCrawlr.INIT_TOPOLOGY(m_DATASET, True )         
     
     # Initialize pattern search filters
     ffactory = FILTER_FACTORY(False )
