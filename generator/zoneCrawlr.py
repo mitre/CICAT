@@ -28,8 +28,7 @@ zoneCrawlr.py - Interactive utility to evaluate infrastructure and topology
 
 import sys
 
-from loaddata import LOAD_DATA
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS 
+from loaddata import LOAD_DATA, m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO  
 from topology import INIT_TOPOLOGY, m_topology, m_zoneCIs
 
 #assumes zone IDs prefixed with 1 digit security level, returns [level, zoneID]
@@ -748,8 +747,8 @@ def optionReader(params, flag):
 # main entry point
 if ( __name__ == "__main__"):   
         
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO  #testbed data used for unit tests
  
     params = sys.argv
     if len(params) > 1:
