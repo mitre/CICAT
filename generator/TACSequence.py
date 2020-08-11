@@ -31,13 +31,11 @@ from random import sample
 from collections import defaultdict
 
 from ffactory import FILTER_FACTORY, INIT_FILTERS
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, m_file_ODNI
+from loaddata import LOAD_DATA
 from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO
+from loaddata import m_IT_test_list, m_ICS_test_list
 from topology import INIT_TOPOLOGY
 from TTPFilter import TTP_FILTER, m_TACTIC_LIST
-import ODNI
-
-from loaddata import m_IT_test_list, m_ICS_test_list
 
 
 # Note: ICS patterns do support privilege escalation[3], credential-access[5], and exfiltration[10] tactics
@@ -244,11 +242,7 @@ if ( __name__ == "__main__"):
       
     myDATASET = LOAD_DATA (Ispread, Tspread, False, False )
     zonemap = INIT_TOPOLOGY(myDATASET, True ) 
-    ODNI.loadODNI(m_file_ODNI )
-    m_STAGES = ODNI.mapTTPs(myDATASET['ATT&CK']) 
-   
-#    LOAD_TTP_SUPPLEMENT (myDATASET) 
-   
+
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
         
