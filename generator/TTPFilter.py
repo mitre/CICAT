@@ -27,15 +27,14 @@ TTPfilter.py - Main TTP filtering routine
 """
 
 import sys
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS
-from ffactory import FILTER_FACTORY, INIT_FILTERS, getTTPs, getTTPsforCTYPE
+from loaddata import LOAD_DATA, m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO  
+from loaddata import m_filter_test_list, m_test_actor_list
+from ffactory import FILTER_FACTORY, INIT_FILTERS, getTTPs, getTTPsforCTYPE, m_TACTIC_LIST
 
 # ATT&CK tactics list
-m_TACTIC_LIST = ['initial-access', 'execution', 'persistence', 'privilege-escalation', 'defense-evasion', 'credential-access', 
-               'discovery', 'lateral-movement', 'collection', 'command-and-control', 'exfiltration', #'deny',
-                'impact', 'inhibit-response-function', 'impair-process-control' ]
-
+#m_TACTIC_LIST = ['initial-access', 'execution', 'persistence', 'privilege-escalation', 'defense-evasion', 'credential-access', 
+#               'discovery', 'lateral-movement', 'collection', 'command-and-control', 'exfiltration', 
+#                'impact', 'inhibit-response-function', 'impair-process-control' ]
 
 
 def TTP_FILTER (dataset, ffactory, IPorHostame, pattern, platFlag, actor, actFlag, trace):
@@ -44,10 +43,6 @@ def TTP_FILTER (dataset, ffactory, IPorHostame, pattern, platFlag, actor, actFla
         if component.getIPAddress() == IPorHostame:
             break
 
-    # assume all threat actors have deny TTPs
-    if (pattern == 'deny'):
-        actFlag = False
- 
     if not (component):
         if trace:
             print ('WARNING TTP_FILTER: Component', IPorHostame, 'not found.')
@@ -65,18 +60,7 @@ def TTP_FILTER (dataset, ffactory, IPorHostame, pattern, platFlag, actor, actFla
     surflist = ctype.getSurfaceList()    
     if not (surflist):
         platform = ctype.getPlatform()
-            
-    if trace:
-        print ('\n')
-        if platform:
-           print ('TTP_FILTER: CTYPE for', IPorHostame, 'platform set to:', platform )
-        elif surflist:
-           print ('TTP_FILTER: CTYPE for', IPorHostame, 'includes surface list:')
-           for s in surflist:
-              print('Surface:', s.getSurface() )
-        else:
-           print ('Warning! TTP_FILTER:', IPorHostame, 'has no platform or surface list.')    
-                       
+                                   
     actr = ''
     if actFlag:
         actr = actor.getGroupID()
@@ -103,7 +87,17 @@ def TTP_FILTER (dataset, ffactory, IPorHostame, pattern, platFlag, actor, actFla
     ret = list(retset)
     
     if trace:
-        print('TTP_FILTER() returns:', ret)
+        if platform:
+           print ('TTP_FILTER: Asset:', IPorHostame, 'Platform:', platform, 'Tactic:', pattern, 'TTPs:', ret )                     
+        elif surflist:
+           slist = []
+           for s in surflist:
+               slist.append (s.getSurface() )
+               
+           print ('TTP_FILTER: Asset:', IPorHostame, 'Surfaces:', slist, 'Pattern:', pattern, 'TTPs:', ret)
+                     
+        else:
+           print ('Warning! TTP_FILTER:', IPorHostame, 'has no platform or surface list.')        
     
     return ret
 
@@ -121,11 +115,9 @@ def optionReader(params, flag):
 # main entry point
 if ( __name__ == "__main__"):   
         
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO  #testbed data used for unit tests
     
-    testhosts = ['DCAE1TSC001', 'NAIMES_EDMZ_2', 'SiemensPLC_#3', 'SiemensPLC_#2'] 
- 
     params = sys.argv
     if len(params) > 1:
         if 'help' in params[1].lower():
@@ -137,12 +129,14 @@ if ( __name__ == "__main__"):
 
         if '-s' in params:
             Tspread = optionReader(params, '-s')   
-           
+
     myDATASET = LOAD_DATA (Ispread, Tspread, False, False )
-    LOAD_TTP_SUPPLEMENT(myDATASET)
+#    LOAD_TTP_SUPPLEMENT(myDATASET)
 
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
+    
+    testhosts = m_filter_test_list 
  
     print ('\n')
     print (' >>> Platform and Attack Surface Filter Test <<<' )
@@ -152,54 +146,50 @@ if ( __name__ == "__main__"):
          if component.getIPAddress() == c:
             component.PP(True)
             break  
-              
-       print ('\n') 
-       print ('Testing platform filter')
-       for p in m_TACTIC_LIST:   
-           ttpseq1 = TTP_FILTER (myDATASET, ffactory, c, p, True, None, False, False)
-           print ('ATT&CK_PICS for ' + c + ' (' + component.getPlatform() + ', ' + 'XXXXX' + ') ' + p + ': ', ttpseq1)
-
-
-    for c in testhosts:
-       for component in myDATASET['COMPONENT']:
-         if component.getIPAddress() == c:
-            component.PP(True)
-            break                
-       
-       print ('\n') 
-       print ('Testing attack surface filter')
-       for p in m_TACTIC_LIST:   
-           ttpseq1 = TTP_FILTER (myDATASET, ffactory, c, p, False, None, False, False)
-           print ('ATT&CK_PICS for ' + c + ' (' + 'XXXXX' + ', ' + component.getCTYPEID() + ') ' + p + ': ', ttpseq1)
+        
+       if not component.getSurfaceList():              
+          print ('\n') 
+          print ('Testing platform filter:', component.getPlatform() )
+          for p in m_TACTIC_LIST:   
+              ttpseq1 = TTP_FILTER (myDATASET, ffactory, c, p, True, None, False, False)
+              print ('TTPs for', c, 'tactic:', p, '('+ str(len(ttpseq1)) + '):', ttpseq1)
+       else:        
+          print ('\n') 
+          print ('Testing attack surface filter:', component.getCTYPEID() )
+          for p in m_TACTIC_LIST:   
+              ttpseq1 = TTP_FILTER (myDATASET, ffactory, c, p, False, None, False, False)
+              print ('TTPs for', c, 'tactic:', p, '('+ str(len(ttpseq1)) + '):', ttpseq1)
            
+            
     print ('\n')
     print (' >>> Threat Actor Filter Testing <<<' )
 
-    actorlist = ['ICSCUB_1', 'RedCanary', 'APT28' ] #'G0007'] #, 'G0006', 'G0050', 'G0053', 'G0041']
+    actorlist = m_test_actor_list 
     
-    for c in testhosts:
-      for a in actorlist:          
+    for c in testhosts:        
+       for component in myDATASET['COMPONENT']:
+             if component.getIPAddress() == c:
+                component.PP(True)
+                break                     
+        
+       for a in actorlist:          
          for actor in myDATASET['ATKGROUPS']:
            if actor.getGroupID() == a:
               break
-    
-         for c in testhosts:
-             for component in myDATASET['COMPONENT']:
-               if component.getIPAddress() == c:
-                  component.PP(True)
-                  break                
- 
-             print ('\n') 
-             print ('Testing platform filter with actor', actor.getName() )       
-             for p in m_TACTIC_LIST:   
-                 ttpseq2 = TTP_FILTER (myDATASET, ffactory, c, p, True, actor, True, False )
-                 print ('ATT&CK_PICS for ' + c + ' (' + component.getPlatform() + ', ' + 'XXXXX' + ') ' + p + ':', ttpseq2)
-           
-             print ('\n') 
-             print ('Testing attack surface filter with actor', actor.getName() )       
-             for p in m_TACTIC_LIST:   
-                 ttpseq2 = TTP_FILTER (myDATASET, ffactory, c, p, False, actor, True, False )
-                 print ('ATT&CK_PICS for ' + c + ' (' + 'XXXXX' + ', ' + component.getCTYPEID() + ') ' + p + ':', ttpseq2)        
- 
+         
+         if not component.getSurfaceList():      
+            print ('\n') 
+            print ('Testing platform filter:', component.getPlatform(), 'with actor', actor.getName() )
+            for p in m_TACTIC_LIST:
+              ttpseq2 = TTP_FILTER (myDATASET, ffactory, c, p, True, actor, True, False )
+              print ('TTPs for', c, 'tactic:', p, '('+ str(len(ttpseq2)) + '):', ttpseq2 )
+         else:        
+            print ('\n') 
+            print ('Testing attack surface filter:', component.getCTYPEID(), 'with actor', actor.getName() )
+            for p in m_TACTIC_LIST:  
+              ttpseq2 = TTP_FILTER (myDATASET, ffactory, c, p, False, actor, True, False )
+              print ('TTPs for', c, 'tactic:', p, '('+ str(len(ttpseq2)) + '):', ttpseq2 )    
 
     print ('End of run')
+    
+    
