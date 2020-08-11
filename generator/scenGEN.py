@@ -34,7 +34,8 @@ from collections import defaultdict
 import json
 
 from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_OSPREAD, m_file_ODNI
+from loaddata import m_file_OSPREAD, m_file_ODNI
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO
 from TACSequence import initPatternMenu, GenTacticPattern, GetPatternbyName, GenTTPSequence
 from ffactory import FILTER_FACTORY, INIT_FILTERS
 from spreadout import ExportData
@@ -114,14 +115,15 @@ def find (dataset, patternID):
         return findMAL(dataset, patternID)
     elif isTOOL(patternID):
         return findTOOL(dataset, patternID)
-        
+
+"""        
 def checkForMods (ATTLIST, tstTime ):
     ret = []    
     for x in ATTLIST:
        if x.modifiedSince (tstTime):
            ret.append (x)
     return ret
-
+"""
 
 def findActor(dataset, aid ):
     for j in dataset['ATKGROUPS']:
@@ -134,6 +136,7 @@ def getTargetRecord(dataset, tid):
         if j.getName() == tid:
             return j
 
+"""
 def Timecheck (dataset, tsttime):
    print ('Checking for updates since', tsttime )
 
@@ -166,7 +169,7 @@ def Timecheck (dataset, tsttime):
        print ('No changes to Mitigations')
    else:
        print ('Changes to Mitigations:', len(c5))   
-
+"""
 
 def traverse(dataset, zonemap, startIP, targetIP, surface, platform, trace):    
 
@@ -571,10 +574,12 @@ Export spreadsheet: optional
 if ( __name__ == "__main__"):
         
 #  default settings
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+    
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO    
+    
     Ospread = m_file_OSPREAD
-    Espread = None
+    Espread = None 
     dbUpdate = False
     dbname = 'cicat2'
     trace = False
