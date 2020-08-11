@@ -359,7 +359,6 @@ def DumpScenarioDetail (wb, key, tracedata, dataset):
     maxrow = writeForensicInfo (dataset, sheet, maxrow, path, ttplist)
     writeCVEInfo (dataset, sheet, maxrow, 10, path )
     
-    
                
 def DumpScenario (fname, tracedata, dataset ):
     wb = Workbook() 
@@ -367,9 +366,7 @@ def DumpScenario (fname, tracedata, dataset ):
         DumpScenarioDetail (wb, s, tracedata, dataset)
     wb.save(filename = fname )   
     
-# main entry point
-if ( __name__ == "__main__"):   
-   print ('No unit test currently supported.')
+
     
     
     
