@@ -28,8 +28,15 @@ ffactory.py - Factory class for constructing TTP Filter_by class instances
 import sys
 import re
 from collections import defaultdict
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS 
+
+from loaddata import LOAD_DATA
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO 
+
+
+m_TACTIC_LIST = ['initial-access', 'execution', 'persistence', 'privilege-escalation', 'defense-evasion', 'credential-access', 
+               'discovery', 'lateral-movement', 'collection', 'command-and-control', 'exfiltration', 
+                'impact', 'inhibit-response-function', 'impair-process-control' ]
+
 
 m_byTacticDict = defaultdict(list)
 m_byPlatformDict = defaultdict(list)
@@ -158,7 +165,6 @@ class FILTER_bySurface(BASEFILTER):
         return
            
 
-
 def getTTPs(ffactory, dataset, tactic, platform, actor):
   
     if not(tactic):
@@ -210,18 +216,13 @@ def showTTPs (title, ttplist):
 
 def INIT_FILTERS (ffactory, dataset):
     
-    platlist = ['Windows', 'Linux', 'macOS', 'ICS']    
-    tactlist = ['initial-access', 'discovery', 'privilege-escalation', 'credential-access', 'collection', 'execution', 
-                'lateral-movement', 'persistence', 'exfiltration',  'defense-evasion', 'command-and-control', 
-                'inhibit-response-function', 'impair-process-control', 'impact'] #, 'deny']
-
     # build tactic and platform and surface filters to include ATT&CK and the TTP_SUP set of TTPs
     fullttplist = dataset['ATT&CK']  + dataset['ATK4ICS TTPs']
     
-    for t in tactlist:
+    for t in m_TACTIC_LIST:
         ffactory.getFilter('byTactic', t, fullttplist ) 
         
-    for p in platlist:
+    for p in ['Windows', 'Linux', 'macOS', 'ICS']:
         ffactory.getFilter('byPlatform', p, fullttplist )    
         
     for surf in dataset['SURFACE']:
@@ -233,52 +234,27 @@ def INIT_FILTERS (ffactory, dataset):
     return       
 
 
-def FILTER_TEST1 (ffactory, dataset, platlist):
-    
-    tactlist = ['initial-access', 'discovery', 'privilege-escalation', 'credential-access', 'collection', 'execution', 
-                'lateral-movement', 'persistence', 'exfiltration',  'defense-evasion', 'command-and-control', 'impact',
-                'inhibit-response-function', 'impair-process-control' ]
-   
+def FILTER_TEST1 (ffactory, dataset, platlist):  
     print ('\n' )
     print ('>> Platform Filter Tests <<')      
     
-    for t in tactlist:    
-        showTTPs ('FILTER TEST: '+ t + ', none, none', getTTPs(ffactory, dataset, t, '', '') )     
+    for t in m_TACTIC_LIST:    
+        showTTPs ('FILTER TEST1: '+ t + ', none, ---', getTTPs(ffactory, dataset, t, '', '') )     
         for p in platlist: 
-          showTTPs ('FILTER TEST: ' + t + ', ' + p + ', none', getTTPs(ffactory, dataset, t, p, '') )     
+          showTTPs ('FILTER TEST1: ' + t + ', ' + p + ', ---', getTTPs(ffactory, dataset, t, p, '') )     
 
-def FILTER_TEST2 (ffactory, dataset, actorlist):
-    
-    tactlist = ['discovery', 'execution', 'lateral-movement', 'persistence', 'defense-evasion', 'command-and-control', 'impact']
-    
+def FILTER_TEST2 (ffactory, dataset, actorlist):    
     print ('\n' )
     print ('>> Threat Actor Profile Tests <<')      
                   
     for a in actorlist:
-        for t in tactlist:
-           showTTPs ('FILTER TEST: ' + t + ', Linux, ' + a, getTTPs(ffactory, dataset, t, 'Linux', a ) )  
-           showTTPs ('FILTER TEST: ' + t + ', Windows, ' + a, getTTPs(ffactory, dataset, t, 'Windows', a ) )  
+        for t in m_TACTIC_LIST:
+           showTTPs ('FILTER TEST2: ' + t + ', Linux, ' + a, getTTPs(ffactory, dataset, t, 'Linux', a ) )  
+           showTTPs ('FILTER TEST2: ' + t + ', Windows, ' + a, getTTPs(ffactory, dataset, t, 'Windows', a ) )  
+           showTTPs ('FILTER TEST2: ' + t + ', ICS, ' + a, getTTPs(ffactory, dataset, t, 'ICS', a ) )  
     
     
-def FILTER_TEST3 (ffactor, dataset, ctypelist):
-
-    print ('\n' )
-    print ('>> Attack Surface Filter Tests <<')   
-    
-
-    for s in ctypelist:
-       surflist = []
-       for x in dataset['SURFACE']:
-           if x.getCTYPE() == s:
-               surflist.append(x.getSurface())
-        
-       print ('\nSurfaces list for ' + s + ' (' + str(len(surflist)) + ' TTPs):', surflist )
-       showTTPs ('Maps to', getTTPsforCTYPE(ffactory, dataset, s) )    
-
-
-    
-def FILTER_TEST4 (ffactory, dataset):
-        
+def FILTER_TEST3 (ffactory, dataset):        
     print ('\n' )
     print ('>> Attack Surfaces Frequency Distribution <<')   
     print ('\n' )
@@ -292,6 +268,21 @@ def FILTER_TEST4 (ffactory, dataset):
         print (str(l[0]), 'TTPs contain tag:', l[1])
         
     return
+
+def FILTER_TEST4 (ffactor, dataset, ctypelist):
+    print ('\n' )
+    print ('>> Attack Surface Filter Tests <<')   
+    
+
+    for s in ctypelist:
+       surflist = []
+       for x in dataset['SURFACE']:
+           if x.getCTYPE() == s:
+               surflist.append(x.getSurface())
+        
+       print ('\nSurfaces list for ' + s + ' (' + str(len(surflist)) + ' TTPs):', surflist )
+       showTTPs ('Maps to', getTTPsforCTYPE(ffactory, dataset, s) )    
+
 
 
 def FILTER_TEST5 (ffactory, dataset):
@@ -322,8 +313,9 @@ def FILTER_TEST5 (ffactory, dataset):
     for d in difflist:
         for a in dataset['ATT&CK']:
             if a.getTECHID() == d:
-                print (a.getTECHID(), ':', a.getName(), 'Tactic:', a.getTactic(), 'Platform:', a.getPlatform(), 'URL:', a.getURL() )
-                break         
+                if a.getPlatform():
+                   print (a.getTECHID(), ':', a.getName(), 'Tactic:', a.getTactic(), 'Platform:', a.getPlatform(), 'URL:', a.getURL() )
+                   break         
 
     return
     
@@ -341,8 +333,8 @@ def optionReader(params, flag):
 # main entry point
 if ( __name__ == "__main__"):   
         
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+    Ispread =  m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO  #testbed data used for unit tests
  
     params = sys.argv
     if len(params) > 1:
@@ -356,18 +348,15 @@ if ( __name__ == "__main__"):
         if '-s' in params:
             Tspread = optionReader(params, '-s')   
            
-    myDATASET = LOAD_DATA (Ispread, Tspread, False, False )
-    LOAD_TTP_SUPPLEMENT(myDATASET)
-    
-    
+    myDATASET = LOAD_DATA (Ispread, Tspread, False, False )    
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
     
     FILTER_TEST1 (ffactory, myDATASET, ['Windows', 'Linux', 'ICS']  )  
-    FILTER_TEST2 (ffactory, myDATASET, ['RedCanary', 'APT28', 'OilRig', 'Lazarus Group'])
-    FILTER_TEST4 (ffactory, myDATASET)
-    FILTER_TEST3 (ffactory, myDATASET, ['C004', 'C005', 'C006', 'C007', 'M009', 'ICS00'] )
-
+    FILTER_TEST2 (ffactory, myDATASET, ['APT28', 'IS01'])
+    FILTER_TEST3 (ffactory, myDATASET)
+    FILTER_TEST4 (ffactory, myDATASET, ['S0001', 'S0002', 'S0003', 'S0004'] )
+    FILTER_TEST5 (ffactory, myDATASET)
     
     print ('End of run')
     
