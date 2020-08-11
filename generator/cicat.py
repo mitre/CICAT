@@ -30,7 +30,7 @@ cicat.py - Critical Infrastructure Cyber Analysis Tool
 import sys, time
 from collections import defaultdict
 from loaddata import LOAD_DATA
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO
 
 myDATAWARE = None
 
@@ -120,8 +120,8 @@ if ( __name__ == "__main__"):
     if mode.lower() == 'help':
        print ('\nUSAGE: python', params[0], '[HELP|SCENARIO|CAPABILITY|LOCATION|ACTOR]')
        exit()  
-       
-    myDATAWARE = LOAD_DATA(m_file_INFRASTRUCTURE, m_file_SCENARIOS, True, False )
+                  
+    myDATAWARE = LOAD_DATA(m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO, True, False )
        
     for q in myDATAWARE['ATKGROUPS']:
        for j in q.getTags():
