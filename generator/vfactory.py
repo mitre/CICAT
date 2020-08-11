@@ -35,6 +35,7 @@ from tmodel import VULNERABILITY
 
 m_CVElist = collections.defaultdict(list)
 
+
 class CVEHandler (xml.sax.ContentHandler):
     def __init__(self):
         self.CurrentData = ""
@@ -124,7 +125,24 @@ class VULNERABILIY_FACTORY():
           parser.parse(file)
        
        if self.trace:
-          print ("CVE data loaded:", len(m_CVElist), "entries")        
+          print ("CVE data loaded:", len(m_CVElist), "entries")     
+          
+# Once m_CVElist includes all of the CVEs read in, go through and filter out  entries that are reserved or rejected
+             
+       filist_1 = findCVEs('RESERVED')
+       for entry in filist_1:
+           del m_CVElist [entry]
+           
+       if self.trace:          
+           print ("dropped RESERVED CVEs:", len(filist_1), "entries")
+           
+       filist_2 = findCVEs('REJECT')
+       for entry in filist_2:
+           del m_CVElist [entry]       
+       
+       if self.trace:
+           print ("dropped REJECTED CVEs:", len(filist_2), "entries")
+ 
  
        ret = []
        for v in ctypelist:
@@ -153,7 +171,7 @@ class VULNERABILIY_FACTORY():
                m_CVElist[s].getEffects()
                m_CVElist[s].getAccess()
                ret.append (m_CVElist[s])
-               v.addVulnerability (m_CVElist[s])
+               v.addVulnerability (m_CVElist[s])                   
                
        return ret
 
