@@ -39,6 +39,7 @@ class VULNERABILITY:
         self.effects = []
         self.access = []
         self.indicator = []
+        self.reserved = False
         
     effectkeys = ['DoS','denial of service', 'denial-of-service', 'hang', 'crash', 'panic', 'outage', 'reload', 'reboot', 'restart', \
                   'degrade', 'flood', 'slow', 'delay', 'replay', 'exhaust', 'leak', 'deplete', 'consume', 'overwrite', 'corrupt', 'modify', 'alter', \
@@ -64,7 +65,7 @@ class VULNERABILITY:
         if self.desc == "":
             self.desc = desc.replace('\n', ' ') 
         else:
-            self.desc = self.desc + desc.replace('\n', ' ') # replacing embedded newlines with spaces
+            self.desc = self.desc + desc.replace('\n', ' ')
             
     def getDescription(self):
         return self.desc
@@ -94,7 +95,7 @@ class VULNERABILITY:
             return self.effects
         self.effects = self.searchbyKeys(self.effectkeys)
         if not(self.effects):
-            self.effects = ['Nada']
+            self.effects = ['None found']
         return self.effects 
 
     def getAccess(self):
@@ -102,7 +103,7 @@ class VULNERABILITY:
           return self.access
         self.access = self.searchbyKeys(self.accesskeys)  
         if not(self.access):
-            self.access = ['Nada']
+            self.access = ['None found']
         return self.access     
     
     def isUniqueIndy (self, entry):
@@ -139,7 +140,7 @@ class VULNERABILITY:
                     break                
            print (shortdesc)
 
-   
+"""   
 class INDICATOR:
     def __init__ (self, cveID, desc):
         self.cveID = cveID
@@ -153,7 +154,7 @@ class INDICATOR:
     
     def PP(self, verbose=False ):
         print ('INDICATOR:', self.desc)
-    
+"""    
 
 class TARGET:
     def __init__ (self, cid, cname):
@@ -291,7 +292,7 @@ class ENTRYPOINT:
     def getZone(self):
         if self.component:
             return self.component.getZone()
-          
+"""          
 class COA:
    def __init__ (self, family, name, title, priority, impact, desc, supp, related ):
        self.family = family
@@ -339,5 +340,5 @@ class COA:
             return self.myKeys
        self.myKeys = self.searchbyKeys(self.coakeys)
        return self.myKeys     
-       
+"""       
        
