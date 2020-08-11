@@ -31,16 +31,14 @@ from random import sample
 from collections import defaultdict
 
 from ffactory import FILTER_FACTORY, INIT_FILTERS
-from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT
+from loaddata import LOAD_DATA, LOAD_TTP_SUPPLEMENT, m_file_ODNI
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO
 from topology import INIT_TOPOLOGY
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS, m_file_ODNI 
-from TTPFilter import TTP_FILTER
+from TTPFilter import TTP_FILTER, m_TACTIC_LIST
 import ODNI
 
-# ATT&CK tactics list
-m_TACTIC_LIST = ['initial-access', 'execution', 'persistence', 'privilege-escalation', 'defense-evasion', 'credential-access', 
-               'discovery', 'lateral-movement', 'collection', 'command-and-control', 'exfiltration', 'deny',
-               'impact', 'inhibit-response-function', 'impair-process-control' ]
+from loaddata import m_IT_test_list, m_ICS_test_list
+
 
 # Note: ICS patterns do support privilege escalation[3], credential-access[5], and exfiltration[10] tactics
 # Note: Non-ICS patterns do not support inhibit-response-function[13] and impair-process-control[14] tactics
@@ -56,10 +54,10 @@ m_objseqs = [['foothold',           'first',     [0, 7] ],
              ['credsandgo',         'any',       [3, 5, 7 ]],
              ['phonehomeandgo',     'any',       [9, 7] ],
              ['backdoor',           'last',      [6, 3, 2] ],
-             ['hammer_1',           'last',      [6, 3, 12] ],   #12 - impact
-             ['hammer_2',           'last',      [6, 12] ],
-             ['hammer_3',           'last',      [6, 13] ],  #13 - inhibit-response-function
-             ['hammer_4',           'last',      [6, 14] ],  #14 - impair-process-contro
+             ['hammer_1',           'last',      [6, 3, 11] ],   #11 - impact
+             ['hammer_2',           'last',      [6, 11] ],
+             ['hammer_3',           'last',      [6, 12] ],  #12 - inhibit-response-function
+             ['hammer_4',           'last',      [6, 13] ],  #13 - impair-process-contro
              ['exfil',              'last',      [8, 10] ]  ]
 
 # dictionary of tactic sequences
@@ -201,8 +199,6 @@ def GenTTPSequence (dataset, factory, patSeq, aName, actFlag, trace):
         
         platflag = True
         if component.getSurfaceList():
-           if trace:
-               print ('INFO.. GenTTPSequence component has surface list.')
            platflag = False
            
         for t in tacpat:                    
@@ -229,9 +225,9 @@ def optionReader(params, flag):
 
 # main entry point
 if ( __name__ == "__main__"):   
-        
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+    
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO
  
     params = sys.argv
     if len(params) > 1:
@@ -251,39 +247,35 @@ if ( __name__ == "__main__"):
     ODNI.loadODNI(m_file_ODNI )
     m_STAGES = ODNI.mapTTPs(myDATASET['ATT&CK']) 
    
-    LOAD_TTP_SUPPLEMENT (myDATASET) 
+#    LOAD_TTP_SUPPLEMENT (myDATASET) 
    
     ffactory = FILTER_FACTORY(False )
     INIT_FILTERS (ffactory, myDATASET)
         
     initPatternMenu()    
     
-    ITpath = ['DCAE1TSC001', 'DCAE1SWC001', 'DCAE0SWC001' ] 
-      
-    ICSpath = ['SiemensPLC_#1', 'SiemensPLC_#2']
-    
     print ('\n')
     print ('>> Objective to Tactic mappings test <<')
 
+#   Evaluate each tactic pattern. If the pattern includes hammer_3 or hammer_4 then use the ICS threat actor and component sequence,
+#   otherwise use the IT threat actor and component list 
     
     for k in m_patternMenu.keys():
-        print ('\n')
-        print ('Testing pattern:', k)
         
-        actor = None
-        if 'ICS' in k:
-            testpath = ICSpath
-            actor = 'ICSCUB_1'
+        if 'hammer_3' in m_patternMenu[k] or 'hammer_4' in m_patternMenu[k]:
+            testpath = m_ICS_test_list
+            actor = 'IS01'
         else:
-            testpath = ITpath
+            testpath = m_IT_test_list
             actor = 'APT28'
         
-        print ('Using attack path:', testpath )
+        print ('\n')
+        print ('Testing pattern:', k, 'using actor:', actor, 'and component sequence:', testpath )
         
         
         patseq = GenTacticPattern(testpath, GetPatternbyName (k), False)
         print (patseq)       
-        print ('\n')
+
         print ('TTP Sequence(', actor,'):', GenTTPSequence (myDATASET, ffactory, patseq, actor, True, True) )
         
     
