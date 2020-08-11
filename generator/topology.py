@@ -31,7 +31,7 @@ import sys
 from collections import defaultdict
 
 from loaddata import LOAD_DATA
-from loaddata import m_file_INFRASTRUCTURE, m_file_SCENARIOS
+from loaddata import m_file_TESTBED_MODEL, m_file_TESTBED_SCNRO  #testbed data used for unit tests
 
 m_topology = defaultdict (list)
 m_zoneCIs = defaultdict (list)
@@ -127,10 +127,10 @@ def optionReader(params, flag):
         exit()    
 
 # main entry point
-if ( __name__ == "__main__"):   
-        
-    Ispread = m_file_INFRASTRUCTURE
-    Tspread = m_file_SCENARIOS
+if ( __name__ == "__main__"):
+    
+    Ispread = m_file_TESTBED_MODEL
+    Tspread = m_file_TESTBED_SCNRO
  
     params = sys.argv
     if len(params) > 1:
