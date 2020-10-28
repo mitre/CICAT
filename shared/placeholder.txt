@@ -1,0 +1,2 @@
+This file exists to prevent git from ignoring empty directories. 
+The shared folder is used to share files between the host and the docker image.
