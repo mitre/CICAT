@@ -1,0 +1,18 @@
+*** Instructions for using docker ***
+
+From the cicat-master directory:
+
+   Building the docker image:
+   
+      docker build -f docker/Dockerfile -t cicat .
+      
+   Running the docker image:
+   
+      docker run -it --mount src=$(pwd)/shared,target=/home/cicat/shared,type=bind cicat   Note: --mount connects a location on the host to a set location in the docker image, which allows you to share files between the host and the docker image. 
+      
+      From a terminal window:
+        
+        python cicat/generator/scenGEN.py >> shared/scenGEN_result.txt   Note: This command runs the scenGEN.py utility and sends output to a file stored at the shared location.
+        
+        exit
+        
