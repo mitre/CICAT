@@ -1,7 +1,7 @@
-# CICAT v1.1
+# Critical Infrastructure Cyberspace Analysis Tool (CICAT) v1.1
 #
 # Copyright 2020 The MITRE Corporation. All Rights Reserved. 
-# Approved for public release. Distribution unlimited.  PRS Case # 20-2400
+# Approved for public release. Distribution unlimited. PRS Case #20-2400.
 #
 
 from faa-cicat-master directory
