@@ -1,8 +1,7 @@
 # CICAT v1.1
-
-# (c) 2020 The MITRE Corporation. All Rights Reserved. 
-# PRS Case # 20-2400
-
+#
+# Copyright 2020 The MITRE Corporation. All Rights Reserved. 
+# Approved for public release. Distribution unlimited.  PRS Case # 20-2400
 #
 
 from faa-cicat-master directory
