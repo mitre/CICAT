@@ -17,7 +17,7 @@ In the CICAT v1.1 distribution, the python program scenGEN.py is used to generat
 
 To run scenGEN.py: 
 
-python scenGEN.py -i <infrastucture spreadsheet.xlsx> -s <scenario specification.xlsx> -o <results spreadsheet.xlsx?
+python scenGEN.py -i \<infrastucture spreadsheet.xlsx\> -s \<scenario specification.xlsx\> -o \<results spreadsheet.xlsx\>
                                                                                                    
                                                                                               
 
