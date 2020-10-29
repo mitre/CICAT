@@ -13,9 +13,11 @@ Python 3.7 or better
 # Installation
 Unzip the distribution
 # How to run
-In the CICAT v1.1 distribution, the python program scenGEN.py is used to generate cyber attack scenarios. This program imports an infrastructure model and scenario specification as Excel spreadsheets, and exports generated scnerarios data as an Excel spreadsdheet. 
+The CICAT v1.1 distribution includes the program scenGEN.py, which is used to generate cyber attack scenarios. This program imports an infrastructure model and scenario specification as Excel spreadsheets, and exports generated scnerarios data as an Excel spreadsdheet. 
 
 To run scenGEN.py: 
 python scenGEN.py -i \<infrastucture spreadsheet.xlsx\> -s \<scenario specification.xlsx\> -o \<results spreadsheet.xlsx\>
                                                                                                    
-Examples of infrastucture and scenario specification spreadsheets are available in the data subdirectory, TB_infrastructure.xlsx and TB_scnearions.xlsx, respectively. 
+Examples of infrastucture and scenario specification spreadsheets can be found in the data subdirectory and are called TB_infrastructure.xlsx and TB_scnearios.xlsx, respectively. These spreadsheets represent the infrastructure testbed used to verify CICAT is functioning correctly, and are imported by default if scenGEN.py is invoked without -i or -s input parameters.  
+
+The -o parameter is used to specify a filename for the output spreadsheet. The output filename is always appended with a timestamp to prevent CICAT from overwriting previous scenario results.  If no -o parameter is supplied, the default filename 'Results' is used and saved in the data subdirectory.
