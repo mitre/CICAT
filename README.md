@@ -8,3 +8,8 @@ Approved for public release; Distribution unlimited. PRS Case 20-2400.
 Apache 2.0
 # Documentation
 A whitepaper discussing CICAT functional capabilities is available at https://www.mitre.org/publications/technical-papers/critical-infrastructure-cyberspace-analysis-tool-cicat-capability.
+# Platform requirements
+Python 3.7 or better
+# Installation
+Unzip the distribution
+# How to run
