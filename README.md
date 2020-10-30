@@ -22,5 +22,18 @@ Examples of infrastucture and scenario specification spreadsheets can be found i
 
 The -o parameter is used to specify a filename for the output spreadsheet. If no -o parameter is supplied, the default filename 'Results' is used and saved in the data subdirectory. The output filename is always appended with a timestamp to prevent CICAT from overwriting previous scenario results. 
 # Worked Example
-The example subfolder contains an example assessment of AP1000 pressurized water reactor (PWR) safety systems based on CICAT scenario generation. The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictious component and network details, and was developed for demonstration purposes only. The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. IS01 is a fictional threat actor. This threat actor's profile includes both Enterprise ATT&CK(tm) and ATT&CK for ICS techniques. 
+The example subfolder contains an example assessment of AP1000 pressurized water reactor (PWR) safety systems using CICAT scenario generation. This worked example is approved for public release, PRS case 20-1395.
+
+The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictious component and network details, and was developed for demonstration purposes. 
+
+The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. Note that IS01 is a fictional threat actor. This threat actor's profile includes both Enterprise ATT&CK(tm) and ATT&CK for ICS techniques and was developed to demontrate use of ATT&CK against IT and OT components.
+
+The CCATrun.bat script invokes the scenGEN.py program to generate scnearios that are output to a RESULTS.ap1000.xlsx spreadsheet.
+
+The CICAT brief.ap1000.pptx powerpoint provides details on 
+
+
+
+
+
 
