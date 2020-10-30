@@ -12,7 +12,7 @@ A whitepaper discussing CICAT functional capabilities is available at https://ww
 Python 3.7 or better
 # Installation
 Unzip the distribution
-# How to run
+# Scenario Generation
 This CICAT distribution includes the program scenGEN.py, which is used to generate cyber attack scenarios. This program imports an infrastructure model and scenario specification as Excel spreadsheets, and exports generated scnerarios data as an Excel spreadsdheet. 
 
 To run scenGEN.py: 
@@ -21,3 +21,6 @@ python scenGEN.py -i \<infrastucture spreadsheet.xlsx\> -s \<scenario specificat
 Examples of infrastucture and scenario specification spreadsheets can be found in the data subdirectory and are called TB_infrastructure.xlsx and TB_scnearios.xlsx, respectively. These spreadsheets represent an infrastructure testbed developed for testing purposes. These testbed files are imported by default if scenGEN.py is invoked without -i or -s input parameters.  
 
 The -o parameter is used to specify a filename for the output spreadsheet. If no -o parameter is supplied, the default filename 'Results' is used and saved in the data subdirectory. The output filename is always appended with a timestamp to prevent CICAT from overwriting previous scenario results. 
+# Worked Example
+The example subfolder contains an example assessment of AP1000 pressurized water reactor (PWR) safety systems based on CICAT scenario generation. The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictious component and network details, and was developed for demonstration purposes only. The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. IS01 is a fictional threat actor. This threat actor's profile includes both Enterprise ATT&CK(tm) and ATT&CK for ICS techniques. 
+
