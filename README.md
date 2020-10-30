@@ -24,7 +24,7 @@ The -o parameter is used to specify a filename for the output spreadsheet. If no
 # Worked Example
 The example subfolder contains an example assessment of AP1000 pressurized water reactor (PWR) safety systems using CICAT scenario generation. This worked example is approved for public release, PRS case 20-1395.
 
-The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictious component and network details, and was developed for demonstration purposes. 
+The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictitious component and network details, and was developed for demonstration purposes. 
 
 The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. Each scenario uses the same threat actor (IS01) applying a different tactic pattern. A tactic pattern specifies the sequence of ATT&CK tactics the threat actor uses over the course of an cyber attack. The spreadsheet provides details on threat actor capabilities and tactic patterns supported in CICAT. 
 
