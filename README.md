@@ -26,14 +26,8 @@ The example subfolder contains an example assessment of AP1000 pressurized water
 
 The infrastructure spreadsheet includes model details for roughly 12 AP1000 safety systems and 80 components. Note that this model contains fictious component and network details, and was developed for demonstration purposes. 
 
-The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. Note that IS01 is a fictional threat actor. This threat actor's profile includes both Enterprise ATT&CK(tm) and ATT&CK for ICS techniques and was developed to demontrate use of ATT&CK against IT and OT components.
+The scneario specification includes 4 scenarios, each targeting a different safety system from internal plant locations and through an external entry point. Each scenario uses a common threat actor (IS01) and applies a different tactic pattern. The spredsheet includes tabs that detail threat actor capabilities and the tactic patterns supported in CICAT. Note that IS01 is a fictional threat actor. This threat actor's profile includes both Enterprise ATT&CK(tm) and ATT&CK for ICS techniques, and was developed to demontrate use of ATT&CK against IT and OT components.
 
-The CCATrun.bat script invokes the scenGEN.py program to generate scnearios that are output to a RESULTS.ap1000.xlsx spreadsheet.
+The CCATrun.bat script (Windows) invokes the scenGEN.py program to generate scnearios that are output to a RESULTS.ap1000.xlsx spreadsheet.
 
-The CICAT brief.ap1000.pptx powerpoint provides details on 
-
-
-
-
-
-
+The CICAT brief.ap1000.pptx powerpoint outlines the assessment scope, objectives, results, and lessons learned.
