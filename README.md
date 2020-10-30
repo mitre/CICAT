@@ -11,7 +11,11 @@ A whitepaper discussing CICAT functional capabilities is available at https://ww
 # Platform requirements
 Python 3.7 or better
 # Installation
-Unzip the distribution
+1. Unzip the distribution into a local directory.
+2. cd to the cicat folder
+3. pip install -r requirements
+4. cd to the example folder
+5. run CCATrun.bat
 # Scenario Generation
 This CICAT distribution includes the program scenGEN.py, which is used to generate cyber attack scenarios. This program imports an infrastructure model and scenario specification as Excel spreadsheets, and exports generated scnerarios data as an Excel spreadsdheet. 
 
