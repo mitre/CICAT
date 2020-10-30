@@ -9,13 +9,13 @@ Apache 2.0
 # Documentation
 A whitepaper discussing CICAT functional capabilities is available at https://www.mitre.org/publications/technical-papers/critical-infrastructure-cyberspace-analysis-tool-cicat-capability.
 # Platform requirements
-Python 3.7 or better
+Python 3.7 or better; pip
 # Installation
 1. Unzip the distribution into a local directory.
-2. cd to the cicat folder
-3. pip install -r requirements
-4. cd to the example folder
-5. run CCATrun.bat
+2. cd to the cicat folder.
+3. pip install -r requirements.
+4. cd to the example folder.
+5. run CCATrun.bat. (If CICAT is installed correctly, this will generate scenarios for the AP1000 model and create a Results spreadsheet.)
 # Scenario Generation
 This CICAT distribution includes the program scenGEN.py, which is used to generate cyber attack scenarios. This program imports an infrastructure model and scenario specification as Excel spreadsheets, and exports generated scnerarios data as an Excel spreadsdheet. 
 
